@@ -1,0 +1,4 @@
+Index; Vehicle Type; Vehicle length; in trip; in position; in time; in gate; out trip; out position; out time; out gate
+0;SE;42580;642246;1;00:16:05;(L);641124;1;01:07:19;(L)
+1;SE;42580;642229;1;00:10:25;(L);641142;1;00:13:19;(L)
+2;SE;42580;611123;1;00:10:05;(L);641144;0;00:13:59;(L)

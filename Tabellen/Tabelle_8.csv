@@ -1,0 +1,4 @@
+Index; Vehicle Type; Vehicle length; in trip; in position; in time; in gate; out trip; out position; out time; out gate
+0;SA;83780;613502;0;00:00:56;(UNDEFINED);612217;0;00:05:51;(UNDEFINED)
+1;SA;83780;613602;0;00:00:56;(UNDEFINED);642219;0;00:06:19;(UNDEFINED)
+2;SA;83780;641559;0;00:19:48;(UNDEFINED);612217;1;01:05:51;(UNDEFINED)
