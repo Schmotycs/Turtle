@@ -2,7 +2,6 @@ from pathlib import Path
 import numpy as np
 import tkinter as tk
 import sys
-import time
 from collections import deque
 
 class Tor:
@@ -75,6 +74,7 @@ class Turtle:
 
 
     def reinlaufen(self):
+        global Meldungen
         if self.status == -1:
             if self.in_gate == 0:
                 richtung = "links"
@@ -131,6 +131,9 @@ def daumenkino(Zustände):
 
 def Start(Pfad):
     global Zustände
+    global Meldungen
+    global Fehlermeldungen
+
 
     tor = Tor(1, 260000)
     Daten = np.genfromtxt(Pfad, delimiter=";", dtype=int, skip_header=1)
@@ -176,15 +179,19 @@ def Start(Pfad):
         else:
             Schildkroeten[Reihenfolge_out[zaehler_out][0]].rauslaufen()
             zaehler_out -= 1
-
     daumenkino(Zustände)
+    
 
        
 
 
-Pfad = Path("C:/Users/dek/Documents/Turtle/TabellenSauber/Tabelle_10.csv")
+Pfad = Path("C:/Users/dek/Documents/Turtle/TabellenSauber/Tabelle_18.csv")
 Zustände = []
+Meldungen = []
+Fehlermeldungen = []
 
 Start(Pfad)
 
- 
+ #Kuppelungen hinzufügen (trip UND in/out time sind gleich)
+ #Log am Ende (wie viele Züge, wie viele Fehler etc)
+ #Text im canvas anstatt in der Konsole 
