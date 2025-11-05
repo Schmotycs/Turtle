@@ -1,6 +1,6 @@
 import csv
 from pathlib import Path
-import numpy
+import numpy as np
 
 
 

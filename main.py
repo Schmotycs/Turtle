@@ -1,9 +1,7 @@
 from pathlib import Path
-import pandas as pd
 import loader
 import Model
-import calc
-import UI
+
 
 
 def run(csv_Path: Path):
@@ -14,7 +12,7 @@ def run(csv_Path: Path):
     number_of_trains, _ = data.shape
     Turtles = []
     for i in range(number_of_trains):
-        t = Model.Turtle(data[i,0], data[i,1], data[i,2], data[i,3], data[i,4], data[i,5], data[i,6], data[i,7], data[i,8], data[i,9], tor)
+        t = Model.Turtle(data[i,0], data[i,1], data[i,2], data[i,3], data[i,4], data[i,5], data[i,6], data[i,7], data[i,8], data[i,9])
         Turtles.append(t)
 
     order_in = []
@@ -46,9 +44,15 @@ def run(csv_Path: Path):
             Turtles[order_out[index_out][0]].rauslaufen(sim)
             index_out -=1
 
-    for line in sim.log:
-        print(line)
+    sim.Animation()
 
-Pfad = Path("C:/Users/dek/Documents/Turtle/TabellenSauber/Tabelle_18.csv")
+
+
+
+Pfad = Path("C:/Users/devin/OneDrive/Desktop/Projekte/Turtle/TabellenSauber/Tabelle_18.csv")
 
 run(Pfad)
+
+
+ #Kuppelungen hinzufügen (trip UND in/out time sind gleich)
+ #Log am Ende (wie viele Züge, wie viele Fehler etc)

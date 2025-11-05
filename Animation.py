@@ -192,6 +192,3 @@ Fehlermeldungen = []
 
 Start(Pfad)
 
- #Kuppelungen hinzufügen (trip UND in/out time sind gleich)
- #Log am Ende (wie viele Züge, wie viele Fehler etc)
- #Text im canvas anstatt in der Konsole 
