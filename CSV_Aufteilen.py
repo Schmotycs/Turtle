@@ -6,11 +6,11 @@ import numpy as np
 
 Pfad = Path("C:/Users/dek/Documents/Turtle/E20-44521.xml-251002-110553-opt_1-tracks.csv")
 
-# Datei lesen
+
 with open(Pfad, mode="r", encoding="utf-8", newline="") as datei:
     daten = datei.readlines()
 
-# Zeilen bereinigen
+
 zeilen = []
 for i in range(len(daten)):
     saubere_zeile = daten[i].strip()
@@ -47,21 +47,18 @@ for i in range(len(zeilen)):
     elif in_tabelle:
         aktuelle_tabelle.append(zeile.split(";"))
 
-# Letzte Tabelle speichern
 if aktuelle_tabelle != []:
    tabellen.append((aktuelle_überschrift, aktuelle_tabelle))
 
-# Ausgabeordner
 Ausgabe = Path("C:/Users/dek/Documents/Turtle/Tabellen")
 Ausgabe.mkdir(exist_ok=True)
 überschriften = []
 
-# Tabellen speichern
 for i in range(len(tabellen)):
     überschrift = tabellen[i][0]
     tabelle = tabellen[i][1]
 
-    # Dateiname bereinigen
+
     dateiname_basis = f"Tabelle_{i+1}"
     dateiname = f"{dateiname_basis}.csv"
 

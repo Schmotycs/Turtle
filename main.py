@@ -43,16 +43,14 @@ def run(csv_Path: Path):
         else:
             Turtles[order_out[index_out][0]].rauslaufen(sim)
             index_out -=1
-
     sim.Animation()
 
 
 
 
-Pfad = Path("C:/Users/devin/OneDrive/Desktop/Projekte/Turtle/TabellenSauber/Tabelle_18.csv")
+Pfad = Path("C:/Users/dek/Documents/Turtle/TabellenSauber/Tabelle_19.csv")
 
 run(Pfad)
-
 
  #Kuppelungen hinzufügen (trip UND in/out time sind gleich)
  #Log am Ende (wie viele Züge, wie viele Fehler etc)

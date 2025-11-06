@@ -10,7 +10,6 @@ class Tor:
         self.place =  deque()
 
     def reinlassen(self, turtle):
-
         if turtle.in_gate == 0:
             self.place.appendleft(turtle.id)
         else:
@@ -18,17 +17,17 @@ class Tor:
 
     
     def rauslassen(self, turtle):
-        if turtle.out_gate == 0:
-            self.place.popleft()
+        if self.kann_rauslaufen(turtle) == True:
+            if turtle.out_gate == 0:
+                self.place.popleft()
+            else:
+                self.place.pop()
         else:
-            self.place.pop()
+            self.place.remove(turtle.id)
 
 
 
     def kann_rauslaufen(self, turtle):
-        if not self.place:
-            return False
-        
         if turtle.out_gate == 0:
             if self.place[0] == turtle.id:
                 return True
@@ -63,7 +62,7 @@ class Turtle:
             sim.reinlassen(self)
             self.status = 0
         else:
-            sim.message(sim.index, f"Schildkröte {self.id} kann nicht ein zweitesmal reinfahren")
+            sim.message_log(sim.index, f"Schildkröte {self.id} kann nicht ein zweitesmal reinfahren")
             
         
 
@@ -72,14 +71,14 @@ class Turtle:
             sim.rauslassen(self)
             self.status = 1
         else:
-            sim.message(sim.index, f"Schildkröte {self.id} kann nicht rauslaufen ohne im Tor zu sein")
+            sim.message_log(sim.index, f"Schildkröte {self.id} kann nicht rauslaufen ohne im Tor zu sein")
 
 
 class Simulation:
     def __init__(self, tor):
         self.tor = tor
         self.states = []
-        self.log = []
+        self.messages = []
         self.index = 0
     
     def reinlassen(self, turtle):
@@ -87,7 +86,7 @@ class Simulation:
         self.tor.used_length += turtle.length
 
         if self.tor.used_length > self.tor.max_length:
-            self.message(self.index, f"Schildkröte {Turtle.id} hat im Tor {self.tor.id} kein Platz")
+            self.message_log(self.index, f"Schildkröte {turtle.id} hat im Tor {self.tor.id} kein Platz")
 
         self.tor.reinlassen(turtle)
             
@@ -99,14 +98,14 @@ class Simulation:
             self.states_log(self.tor.place.copy())
             richtung = "rechts"
 
-        self.message(self.index, f"Schildkröte {turtle.id} lief um {turtle.in_time} von {richtung} rein")
+        self.message_log(self.index, f"Schildkröte {turtle.id} lief um {turtle.in_time} von {richtung} rein")
         
 
     
     def rauslassen(self, turtle):
         self.index += 1
         if self.tor.kann_rauslaufen(turtle) == False:
-            self.message(self.index, f"Schildkröte {turtle.id} ist blockiert und kann nicht nach {turtle.out_gate} raus")
+            self.message_log(self.index, f"Schildkröte {turtle.id} ist blockiert und kann nicht nach {turtle.out_gate} raus")
 
         self.tor.used_length -= turtle.length
 
@@ -119,11 +118,14 @@ class Simulation:
             self.states_log(self.tor.place.copy())
             richtung = "rechts"
 
-        self.message(self.index, f"Schildkröte {turtle.id} lief um {turtle.out_time} von {richtung} raus")
+        self.message_log(self.index, f"Schildkröte {turtle.id} lief um {turtle.out_time} von {richtung} raus")
 
 
-    def message(self, index, msg):
-        self.log.append((index, msg))
+    def message_log(self, index, msg):
+        while len(self.messages) <= index:
+            self.messages.append([])
+        self.messages[index].append(msg)
+
 
     def states_log(self, state):
         self.states.append((state))
@@ -138,11 +140,12 @@ class Simulation:
 
         def Bild(i):
             canvas.delete("all")
-            root.title(f"Aktion {self.log[i][0]}/{len(self.log)}")
-            canvas.create_text(300, 100, text = self.log[i][1])
+
             if i == len(self.states):
                 return
             
+            root.title(f"Aktion {i+1}/{len(self.states)}")
+
             n = len(self.states[i])
             for j in range(n):
                 x = 400 - 50 * (n-j-1)
@@ -150,7 +153,11 @@ class Simulation:
                 canvas.create_oval(x-r, y+r, x+r, y-r, fill="green")
                 canvas.create_text(x,y, text=str(self.states[i][j]))
 
-            root.after(1500, lambda: Bild(i+1))
+            for j in range(len(self.messages[i+1])):
+                canvas.create_text(300, 100+50*j, text = self.messages[i+1][j])
+            
+
+            root.bind("<Return>", lambda e: Bild(i+1))
 
         Bild(0)
         root.mainloop() 
