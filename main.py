@@ -1,6 +1,7 @@
 from pathlib import Path
 import loader
 import Model
+from collections import defaultdict
 
 
 
@@ -26,8 +27,18 @@ def run(csv_Path: Path):
 
     order_out = list(zip(order_in, time_out))
     order_out.sort(key=lambda x: x[1], reverse=True)
+
+
     order_in = list(zip(order_in, time_in))
+    groups = defaultdict(list)
+    
+    for i in Turtles:
+        groups[(i.in_trip, i.in_time)].append(i.id)
+
+    order_in = [((tuple(ids)), time) for (trip, time), ids in groups.items()]
+    
     order_in.sort(key= lambda x: x[1], reverse=True)
+
 
     index_in = number_of_trains -1
     index_out = number_of_trains -1
@@ -53,4 +64,5 @@ Pfad = Path("C:/Users/dek/Documents/Turtle/TabellenSauber/Tabelle_19.csv")
 run(Pfad)
 
  #Kuppelungen hinzufügen (trip UND in/out time sind gleich)
+    #out kuppeln hinzufügen und rein/laus methoden updaten 
  #Log am Ende (wie viele Züge, wie viele Fehler etc)

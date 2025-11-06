@@ -64,7 +64,7 @@ class Turtle:
         else:
             sim.message_log(sim.index, f"Schildkröte {self.id} kann nicht ein zweitesmal reinfahren")
             
-        
+
 
     def rauslaufen(self, sim):
         if self.status == 0:
@@ -91,7 +91,6 @@ class Simulation:
         self.tor.reinlassen(turtle)
             
         if turtle.in_gate == 0:
-
             self.states_log(self.tor.place.copy())
             richtung = "links"
         else:
