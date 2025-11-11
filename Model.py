@@ -2,7 +2,7 @@ from collections import deque
 import tkinter as tk
 
 
-class Tor:
+class Tor:  #simmuliert ein Gleis und speichert die Zustände zum welchen Zeitpunkt welche Schildkröte da ist und wie und wo rausläuft
     def __init__(self, id, max_length):
         self.id = id
         self.max_length = max_length
@@ -27,7 +27,7 @@ class Tor:
 
 
 
-    def kann_rauslaufen(self, turtle):
+    def kann_rauslaufen(self, turtle):  #überprüft ob die Schildkröte einfach rauslaufen kann
         if turtle.out_gate == 0:
             if self.place[0] == turtle.id:
                 return True
@@ -40,7 +40,7 @@ class Tor:
                 return False
 
 
-class Turtle:
+class Turtle:   #Für jedes Fahrzeug wird ein Turtle Objekt erstellt, mit folgenden eigenschaftten:
     status = -1 #-1: T war noch nicht im Tor, 0: T ist gerade im Tor, 1: T war schon im Tor
 
     def __init__(self, id, length, in_trip, in_pos, in_time, in_gate, out_trip, out_pos, out_time, out_gate):
@@ -58,8 +58,8 @@ class Turtle:
 
 
     def reinlaufen(self, sim):
-        if self.status == -1:
-            sim.reinlassen(self)
+        if self.status == -1:       #(-1) Schildkröte war noch nicht im Gleis
+            sim.reinlassen(self)    #löst die reinlassfunktion von der Simulation auf
             self.status = 0
         else:
             sim.message_log(sim.index, f"Schildkröte {self.id} kann nicht ein zweitesmal reinfahren")
@@ -73,10 +73,19 @@ class Turtle:
         else:
             sim.message_log(sim.index, f"Schildkröte {self.id} kann nicht rauslaufen ohne im Tor zu sein")
 
+class Verbund:
+    def __init__(self, turtles):
+        self.turtles = turtles
+
+    def reinlaufen(self, sim):
+        for turtle in self.turtles:
+            sim.reinlassen(turtle)
+
 
 class Simulation:
-    def __init__(self, tor):
+    def __init__(self, tor, turtles):
         self.tor = tor
+        self.turtles = turtles
         self.states = []
         self.messages = []
         self.index = 0
@@ -85,12 +94,12 @@ class Simulation:
         self.index += 1
         self.tor.used_length += turtle.length
 
-        if self.tor.used_length > self.tor.max_length:
+        if self.tor.used_length > self.tor.max_length:  #überprüft die maximale Gleislänge
             self.message_log(self.index, f"Schildkröte {turtle.id} hat im Tor {self.tor.id} kein Platz")
 
         self.tor.reinlassen(turtle)
             
-        if turtle.in_gate == 0:
+        if turtle.in_gate == 0:     #kopiert den jetztigen Zustand vom Tor und speichert den
             self.states_log(self.tor.place.copy())
             richtung = "links"
         else:
@@ -101,10 +110,10 @@ class Simulation:
         
 
     
-    def rauslassen(self, turtle):
+    def rauslassen(self, turtle):   #Analog zu reinlassen
         self.index += 1
         if self.tor.kann_rauslaufen(turtle) == False:
-            self.message_log(self.index, f"Schildkröte {turtle.id} ist blockiert und kann nicht nach {turtle.out_gate} raus")
+            self.message_log(self.index, f"Schildkröte {turtle.id} ist blockiert und möchte nach {turtle.out_gate} raus")
 
         self.tor.used_length -= turtle.length
 
@@ -120,7 +129,7 @@ class Simulation:
         self.message_log(self.index, f"Schildkröte {turtle.id} lief um {turtle.out_time} von {richtung} raus")
 
 
-    def message_log(self, index, msg):
+    def message_log(self, index, msg):  #speichert Texte um diese später wiederzugeben
         while len(self.messages) <= index:
             self.messages.append([])
         self.messages[index].append(msg)
@@ -131,7 +140,7 @@ class Simulation:
 
 
 
-    def Animation(self):
+    def Animation(self):    #Animation wird erstellt
         r = 20
         root = tk.Tk()
         canvas = tk.Canvas(root, width=600, height=600)
@@ -147,13 +156,19 @@ class Simulation:
 
             n = len(self.states[i])
             for j in range(n):
-                x = 400 - 50 * (n-j-1)
-                y = 400
-                canvas.create_oval(x-r, y+r, x+r, y-r, fill="green")
-                canvas.create_text(x,y, text=str(self.states[i][j]))
+                x = 350 - 50 * (n-j-1)
+                y = 350
+                canvas.create_oval(x-r, y+r, x+r, y-r, fill="green")    #Ball
+                canvas.create_text(x,y, text=str(self.states[i][j]))    #Nummer
 
-            for j in range(len(self.messages[i+1])):
-                canvas.create_text(300, 100+50*j, text = self.messages[i+1][j])
+                if self.turtles[self.states[i][j]].out_gate == 0:  #Pfeil
+                    direction_out = tk.FIRST
+                else:
+                    direction_out = tk.LAST
+                canvas.create_line(x-15, y-30, x+15, y-30, arrow=direction_out)
+
+            for j in range(len(self.messages[i+1])):    #Log nachrichten
+                canvas.create_text(50, 100+30*j, text = f"- {self.messages[i+1][j]}", anchor="w")
             
 
             root.bind("<Return>", lambda e: Bild(i+1))
