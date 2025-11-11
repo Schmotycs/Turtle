@@ -15,6 +15,13 @@ class Tor:  #simmuliert ein Gleis und speichert die Zustände zum welchen Zeitpu
         else:
             self.place.append(turtle.id)
 
+    def verbund_reinlassen(self, verbund):
+        if verbund.in_gate == 0:
+            for i in range(len(verbund)):
+                self.place.appendleft(verbund[i].id)
+        else:
+            self.place.append(verbund[i].id)
+
     
     def rauslassen(self, turtle):
         if self.kann_rauslaufen(turtle) == True:
@@ -74,12 +81,21 @@ class Turtle:   #Für jedes Fahrzeug wird ein Turtle Objekt erstellt, mit folgen
             sim.message_log(sim.index, f"Schildkröte {self.id} kann nicht rauslaufen ohne im Tor zu sein")
 
 class Verbund:
-    def __init__(self, turtles):
-        self.turtles = turtles
+    def __init__(self, verbund):
+        self.verbund = verbund
+        self.in_time = verbund[0].in_time
+        self.in_gate = verbund[0].in_gate
 
     def reinlaufen(self, sim):
-        for turtle in self.turtles:
-            sim.reinlassen(turtle)
+        for i in range(len(self.verbund)):
+            if not self.verbund[i].status == -1:
+                sim.message_log(sim.index, f"Schildköte {self.verbund[i].id} kann nicht ein zweitesmal reinlaufen")
+                return
+        sim.verbund_reinlassen(self)
+
+        for i in range(len(self.verbund)):
+            self.verbund[i].status = 0
+        
 
 
 class Simulation:
@@ -107,7 +123,30 @@ class Simulation:
             richtung = "rechts"
 
         self.message_log(self.index, f"Schildkröte {turtle.id} lief um {turtle.in_time} von {richtung} rein")
+
+
+    def verbund_reinlassen(self, verbund):
+        self.index += 1
+        verbund_length = 0
+        ids = []
+        for i in range(len(verbund)):
+            verbund_length += verbund[i].length
+            ids.append(verbund[i].id)
+
+        self.tor.used_length += verbund_length
+
+        if self.tor.used_length > self.tor.max_length:  #überprüft die maximale Gleislänge
+            self.message_log(self.index, f"Schildkrötenverbund aus den Schildkröten {ids} hat im Tor {self.tor.id} kein Platz")
         
+        self.tor.verbund_reinlassen(verbund) #muss noch implementiert werden
+
+        if verbund.in_gate == 0:
+            self.states_log(self.tor.place.copy())
+            richtung = "links"
+        else:
+            self.states_log(self.tor.place.copy())
+            richtung = "rechts"
+        self.message_log(self.index, f"Schildkrötenverbund aus den Schildkröten {ids} lief um {verbund.in_time} von {richtung} rein")
 
     
     def rauslassen(self, turtle):   #Analog zu reinlassen

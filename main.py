@@ -51,7 +51,7 @@ def run(csv_Path: Path):
         if index_in >= 0:
             if order_in[index_in][1] < order_out[index_out][1]:
                 if len(order_in[index_in][0]) == 1:
-                    Turtles[order_in[index_in][0]].reinlaufen(sim)
+                    Turtles[order_in[index_in][0][0]].reinlaufen(sim)
                 else:
                     verbund = []
                     for i in range(len(order_in[index_in][0])):
@@ -75,6 +75,5 @@ Pfad = Path("C:/Users/dek/Documents/Turtle/TabellenSauber/Tabelle_19.csv")
 run(Pfad)
 
  #Kuppelungen hinzufügen (trip UND in/out time sind gleich)
-    #in kupplen sim verbund funktion hinzufügen
     #out kuppeln hinzufügen und rein/laus methoden updaten 
  #Log am Ende (wie viele Züge, wie viele Fehler etc)
