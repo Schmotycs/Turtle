@@ -17,10 +17,12 @@ class Tor:  #simmuliert ein Gleis und speichert die Zustände zum welchen Zeitpu
 
     def verbund_reinlassen(self, verbund):
         if verbund.in_gate == 0:
-            for i in range(len(verbund.verbund)):
-                self.place.appendleft(verbund.verbund[i].id)
+            for i in range(len(verbund.t_zsm)):
+                self.place.appendleft(verbund.t_zsm[i].id)
         else:
-            self.place.append(verbund.verbund[i].id)
+            for i in range(len(verbund.t_zsm)):
+                self.place.append(verbund.t_zsm[i].id)
+        print(self.place)
 
     
     def rauslassen(self, turtle):
@@ -81,20 +83,23 @@ class Turtle:   #Für jedes Fahrzeug wird ein Turtle Objekt erstellt, mit folgen
             sim.message_log(sim.index, f"Schildkröte {self.id} kann nicht rauslaufen ohne im Tor zu sein")
 
 class Verbund:
-    def __init__(self, verbund):
-        self.verbund = verbund
-        self.in_time = verbund[0].in_time
-        self.in_gate = verbund[0].in_gate
+    def __init__(self, t_zsm):
+        self.t_zsm = t_zsm
+        self.in_time = t_zsm[0].in_time
+        self.in_gate = t_zsm[0].in_gate
 
     def reinlaufen(self, sim):
-        for i in range(len(self.verbund)):
-            if not self.verbund[i].status == -1:
-                sim.message_log(sim.index, f"Schildköte {self.verbund[i].id} kann nicht ein zweitesmal reinlaufen")
+        for i in range(len(self.t_zsm)):
+            if not self.t_zsm[i].status == -1:
+                sim.message_log(sim.index, f"Schildköte {self.t_zsm[i].id} kann nicht ein zweitesmal reinlaufen")
                 return
+        for i in range(len(self.t_zsm)):
+         print(self.t_zsm[i].id)
+              
         sim.verbund_reinlassen(self)
 
-        for i in range(len(self.verbund)):
-            self.verbund[i].status = 0
+        for i in range(len(self.t_zsm)):
+            self.t_zsm[i].status = 0
         
 
 
@@ -129,17 +134,16 @@ class Simulation:
         self.index += 1
         verbund_length = 0
         ids = []
-        print(verbund.verbund)
-        for i in range(len(verbund.verbund)):
-            verbund_length += verbund.verbund[i].length
-            ids.append(verbund.verbund[i].id)
+        for i in range(len(verbund.t_zsm)):
+            verbund_length += verbund.t_zsm[i].length
+            ids.append(verbund.t_zsm[i].id)
 
         self.tor.used_length += verbund_length
 
         if self.tor.used_length > self.tor.max_length:  #überprüft die maximale Gleislänge
             self.message_log(self.index, f"Schildkrötenverbund aus den Schildkröten {ids} hat im Tor {self.tor.id} kein Platz")
         
-        self.tor.verbund_reinlassen(verbund) #muss noch implementiert werden
+        self.tor.verbund_reinlassen(verbund)
 
         if verbund.in_gate == 0:
             self.states_log(self.tor.place.copy())
@@ -185,6 +189,7 @@ class Simulation:
         root = tk.Tk()
         canvas = tk.Canvas(root, width=600, height=600)
         canvas.pack()
+        root.bind("<Return>", lambda e: Bild(0))
 
         def Bild(i):
             canvas.delete("all")
@@ -214,5 +219,4 @@ class Simulation:
 
             root.bind("<Return>", lambda e: Bild(i+1))
 
-        Bild(0)
         root.mainloop() 

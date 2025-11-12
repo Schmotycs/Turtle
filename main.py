@@ -33,16 +33,34 @@ def run(csv_Path: Path):
 
     #Fahrzeuge die zusammen reifahren werden in eine Gruppe gesteckt
     order_in = list(zip(order_in, time_in))
-    groups = defaultdict(list)
+
+    in_groups = {}
     
     for i in Turtles:
-        groups[(i.in_trip, i.in_time)].append(i.id)
+        in_trip_time = (i.in_trip, i.in_time)
 
-    order_in = [((tuple(ids)), time) for (trip, time), ids in groups.items()]
+        if in_trip_time not in in_groups:
+            in_groups[in_trip_time] = []
+
+        in_groups[in_trip_time].append(i.id)
+
+    order_in = []
+
+    for (_, in_time), ids in in_groups.items():
+        id_in_pos = []
+        for id in ids:
+            id_in_pos.append((id, Turtles[id].in_pos))
+
+        id_in_pos.sort(key = lambda x: x[1])
+        id_in_sort = [x[0] for x in id_in_pos]
+
+        ids_tupel = tuple(id_in_sort)
+        order_in.append((ids_tupel, in_time))
+
     
     order_in.sort(key= lambda x: x[1], reverse=True)
-    print(order_in)
-    print(order_out)
+
+
 
     index_in = len(order_in) -1
     index_out = len(order_out) -1
@@ -70,7 +88,7 @@ def run(csv_Path: Path):
 
 
 
-Pfad = Path("C:/Users/dek/Documents/Turtle/TabellenSauber/Testlinksrechts.csv")
+Pfad = Path("C:/Users/dek/Documents/Turtle/TabellenSauber/Testverbundin.csv")
 
 run(Pfad)
 
