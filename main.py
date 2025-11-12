@@ -57,7 +57,7 @@ def run(csv_Path: Path):
                     for i in range(len(order_in[index_in][0])):
                         verbund.append(Turtles[order_in[index_in][0][i]])
                     verbund_turtles = Model.Verbund(verbund)
-                    
+                    verbund_turtles.reinlaufen(sim)
                 index_in -= 1
             else:
                 Turtles[order_out[index_out][0]].rauslaufen(sim)
@@ -70,7 +70,7 @@ def run(csv_Path: Path):
 
 
 
-Pfad = Path("C:/Users/dek/Documents/Turtle/TabellenSauber/Tabelle_19.csv")
+Pfad = Path("C:/Users/dek/Documents/Turtle/TabellenSauber/Testlinksrechts.csv")
 
 run(Pfad)
 

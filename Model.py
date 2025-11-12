@@ -17,10 +17,10 @@ class Tor:  #simmuliert ein Gleis und speichert die Zustände zum welchen Zeitpu
 
     def verbund_reinlassen(self, verbund):
         if verbund.in_gate == 0:
-            for i in range(len(verbund)):
-                self.place.appendleft(verbund[i].id)
+            for i in range(len(verbund.verbund)):
+                self.place.appendleft(verbund.verbund[i].id)
         else:
-            self.place.append(verbund[i].id)
+            self.place.append(verbund.verbund[i].id)
 
     
     def rauslassen(self, turtle):
@@ -129,9 +129,10 @@ class Simulation:
         self.index += 1
         verbund_length = 0
         ids = []
-        for i in range(len(verbund)):
-            verbund_length += verbund[i].length
-            ids.append(verbund[i].id)
+        print(verbund.verbund)
+        for i in range(len(verbund.verbund)):
+            verbund_length += verbund.verbund[i].length
+            ids.append(verbund.verbund[i].id)
 
         self.tor.used_length += verbund_length
 
@@ -195,7 +196,7 @@ class Simulation:
 
             n = len(self.states[i])
             for j in range(n):
-                x = 350 - 50 * (n-j-1)
+                x = 350 - 50*(n-j-1)
                 y = 350
                 canvas.create_oval(x-r, y+r, x+r, y-r, fill="green")    #Ball
                 canvas.create_text(x,y, text=str(self.states[i][j]))    #Nummer
@@ -208,6 +209,7 @@ class Simulation:
 
             for j in range(len(self.messages[i+1])):    #Log nachrichten
                 canvas.create_text(50, 100+30*j, text = f"- {self.messages[i+1][j]}", anchor="w")
+                
             
 
             root.bind("<Return>", lambda e: Bild(i+1))
