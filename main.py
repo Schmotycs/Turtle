@@ -29,6 +29,26 @@ def run(csv_Path: Path):
         time_out.append(Turtles[i].out_time)
 
     order_out = list(zip(order_in, time_out))
+    out_groups = {}
+    for i in Turtles:
+        out_trip_time = (i.out_trip, i.out_time)
+
+        if out_trip_time not in out_groups:
+            out_groups[out_trip_time] = []
+        out_groups[out_trip_time].append(i.id)
+
+    order_out = []
+
+    for (_, out_time), ids in out_groups.items():
+        id_out_pos = []
+        for id in ids:
+            id_out_pos.append((id, Turtles[id].in_pos))
+
+        id_out_pos.sort(key = lambda x: x[1])
+        id_out_sort = [x[0] for x in id_out_pos]
+        ids_out_tupel = tuple(id_out_sort)
+        order_out.append((ids_out_tupel, out_time))
+
     order_out.sort(key=lambda x: x[1], reverse=True)
 
     #Fahrzeuge die zusammen reifahren werden in eine Gruppe gesteckt
@@ -51,11 +71,11 @@ def run(csv_Path: Path):
         for id in ids:
             id_in_pos.append((id, Turtles[id].in_pos))
 
-        id_in_pos.sort(key = lambda x: x[1])
+        id_in_pos.sort(key = lambda x: x[1])     #sortieren nach in_pos
         id_in_sort = [x[0] for x in id_in_pos]
 
-        ids_tupel = tuple(id_in_sort)
-        order_in.append((ids_tupel, in_time))
+        ids_in_tupel = tuple(id_in_sort)
+        order_in.append((ids_in_tupel, in_time))
 
     
     order_in.sort(key= lambda x: x[1], reverse=True)
@@ -78,11 +98,32 @@ def run(csv_Path: Path):
                     verbund_turtles.reinlaufen(sim)
                 index_in -= 1
             else:
-                Turtles[order_out[index_out][0]].rauslaufen(sim)
+                if len(order_out[index_out][0]) == 1:
+                    Turtles[order_out[index_out][0][0]].rauslaufen(sim)
+                else:
+                    verbund = []
+                    for i in range(len(order_out[index_out][0])):
+                        verbund.append(Turtles[order_out[index_out][0][i]])
+                    verbund_turtles = Model.Verbund(verbund)
+                    verbund_turtles.rauslassen(sim)
                 index_out -= 1
         else:
-            Turtles[order_out[index_out][0]].rauslaufen(sim)
+            if len(order_out[index_out][0]) == 1:
+                    Turtles[order_out[index_out][0][0]].rauslaufen(sim)
+
+            else:
+                verbund = []
+                for i in range(len(order_out[index_out][0])):
+                    verbund.append(Turtles[order_out[index_out][0][i]])
+                verbund_turtles = Model.Verbund(verbund)
+                verbund_turtles.rauslassen(sim)
+
             index_out -=1
+
+
+
+
+
     sim.Animation()
 
 

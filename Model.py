@@ -22,8 +22,6 @@ class Tor:  #simmuliert ein Gleis und speichert die Zustände zum welchen Zeitpu
         else:
             for i in range(len(verbund.t_zsm)):
                 self.place.append(verbund.t_zsm[i].id)
-        print(self.place)
-
     
     def rauslassen(self, turtle):
         if self.kann_rauslaufen(turtle) == True:
@@ -33,6 +31,18 @@ class Tor:  #simmuliert ein Gleis und speichert die Zustände zum welchen Zeitpu
                 self.place.pop()
         else:
             self.place.remove(turtle.id)
+
+    def verbund_rauslassen(self, verbund, ids):
+        if self.verbund_kann_rauslaufen(verbund, ids) == True:
+            if verbund.out_gate == 0:
+                for i in range(len(verbund.t_zsm)):
+                    self.place.popleft()
+            else:
+                self.place.pop()
+        else:
+            for id in ids:
+                self.place.remove(id)
+
 
 
 
@@ -47,7 +57,18 @@ class Tor:  #simmuliert ein Gleis und speichert die Zustände zum welchen Zeitpu
                 return True
             else:
                 return False
-
+            
+    def verbund_kann_rauslaufen(self, verbund, ids):
+        if verbund.out_gate == 0:
+            for i in range(len(ids)):
+                if self.place[i] not in ids:
+                    return False
+            return True
+        else:
+            for i in range(len(ids)):
+                if self.place[-1-i] not in ids:
+                    return False
+            return True
 
 class Turtle:   #Für jedes Fahrzeug wird ein Turtle Objekt erstellt, mit folgenden eigenschaftten:
     status = -1 #-1: T war noch nicht im Tor, 0: T ist gerade im Tor, 1: T war schon im Tor
@@ -87,20 +108,26 @@ class Verbund:
         self.t_zsm = t_zsm
         self.in_time = t_zsm[0].in_time
         self.in_gate = t_zsm[0].in_gate
+        self.out_time = t_zsm[0].out_time
+        self.out_gate = t_zsm[0].out_gate
 
     def reinlaufen(self, sim):
         for i in range(len(self.t_zsm)):
             if not self.t_zsm[i].status == -1:
                 sim.message_log(sim.index, f"Schildköte {self.t_zsm[i].id} kann nicht ein zweitesmal reinlaufen")
                 return
-        for i in range(len(self.t_zsm)):
-         print(self.t_zsm[i].id)
-              
         sim.verbund_reinlassen(self)
 
         for i in range(len(self.t_zsm)):
             self.t_zsm[i].status = 0
         
+    def rauslassen(self, sim):
+        for i in range(len(self.t_zsm)):
+            if not self.t_zsm[i].status == 0:
+                sim.message_log(sim.index, f"Schildköte {self.t_zsm[i].id} kann nicht rauslaufen ohne im Tor zu sein")
+                return
+        sim.verbund_rauslassen(self)
+
 
 
 class Simulation:
@@ -171,6 +198,36 @@ class Simulation:
             richtung = "rechts"
 
         self.message_log(self.index, f"Schildkröte {turtle.id} lief um {turtle.out_time} von {richtung} raus")
+
+    def verbund_rauslassen(self, verbund):
+        self.index += 1
+        verbund_length = 0
+        ids = []
+
+        for i in range(len(verbund.t_zsm)):
+            verbund_length += verbund.t_zsm[i].length
+            ids.append(verbund.t_zsm[i].id)
+
+        if self.tor.verbund_kann_rauslaufen(verbund, ids) == False:
+            self.message_log(self.index, f"Schildkörtenverbund aus den Schildkröten {ids} ist blockiert")
+        
+        self.tor.used_length -= verbund_length
+
+        self.tor.verbund_rauslassen(verbund, ids)
+
+        if verbund.out_gate == 0:
+            self.states_log(self.tor.place.copy())
+            richtung = "links"
+        else:
+            self.states_log(self.tor.place.copy())
+            richtung = "rechts"
+        self.message_log(self.index, f"Schildkrötenverbund aus den Schildkröten {ids} lief um {verbund.out_time} aus {richtung} raus")
+
+
+
+        
+        
+
 
 
     def message_log(self, index, msg):  #speichert Texte um diese später wiederzugeben
