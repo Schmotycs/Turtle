@@ -163,7 +163,7 @@ class Simulation:
         ids = []
         for i in range(len(verbund.t_zsm)):
             verbund_length += verbund.t_zsm[i].length
-            ids.append(verbund.t_zsm[i].id)
+            ids.append(int(verbund.t_zsm[i].id))
 
         self.tor.used_length += verbund_length
 
@@ -199,6 +199,7 @@ class Simulation:
 
         self.message_log(self.index, f"Schildkröte {turtle.id} lief um {turtle.out_time} von {richtung} raus")
 
+
     def verbund_rauslassen(self, verbund):
         self.index += 1
         verbund_length = 0
@@ -206,7 +207,7 @@ class Simulation:
 
         for i in range(len(verbund.t_zsm)):
             verbund_length += verbund.t_zsm[i].length
-            ids.append(verbund.t_zsm[i].id)
+            ids.append(int(verbund.t_zsm[i].id))
 
         if self.tor.verbund_kann_rauslaufen(verbund, ids) == False:
             self.message_log(self.index, f"Schildkörtenverbund aus den Schildkröten {ids} ist blockiert")
@@ -242,38 +243,62 @@ class Simulation:
 
 
     def Animation(self):    #Animation wird erstellt
-        r = 20
+        r = 23
         root = tk.Tk()
-        canvas = tk.Canvas(root, width=600, height=600)
+        höhe = 600
+        breite = 600
+        Zughöhe = 350
+        canvas = tk.Canvas(root, width=breite, height=höhe)
         canvas.pack()
         root.bind("<Return>", lambda e: Bild(0))
 
-        def Bild(i):
+
+        def Bahnhof():
             canvas.delete("all")
 
-            if i == len(self.states):
+            root.title(f"Aktion 0/{len(self.states)}")
+            canvas.create_rectangle(-10, Zughöhe+10, breite+10, Zughöhe-10, fill="azure3", width=4)
+            canvas.create_text(25, Zughöhe-35, text= str("L"), fill="green3", font=("Segoe UI", 16))
+            canvas.create_text(breite-25, Zughöhe-35, text= str("R"), fill="red2", font=("Segoe UI", 16))
+            
+            x_pos = 0
+            while x_pos < breite:
+                canvas.create_rectangle(x_pos+3, Zughöhe+15, x_pos-3, Zughöhe-15, fill="sienna4")
+                x_pos += 30
+
+
+        def Bild(i):
+            canvas.delete("all")
+            if i >= len(self.states):
                 return
+            Bahnhof()
+
             
             root.title(f"Aktion {i+1}/{len(self.states)}")
 
             n = len(self.states[i])
+    
+            
+
             for j in range(n):
                 x = 350 - 50*(n-j-1)
-                y = 350
-                canvas.create_oval(x-r, y+r, x+r, y-r, fill="green")    #Ball
-                canvas.create_text(x,y, text=str(self.states[i][j]))    #Nummer
 
-                if self.turtles[self.states[i][j]].out_gate == 0:  #Pfeil
-                    direction_out = tk.FIRST
-                else:
-                    direction_out = tk.LAST
-                canvas.create_line(x-15, y-30, x+15, y-30, arrow=direction_out)
+                canvas.create_oval(x-r, Zughöhe+r, x+r, Zughöhe-r, fill="green")    #Ball
+                canvas.create_text(x,Zughöhe, text=str(self.states[i][j]))    #Nummer
+
 
             for j in range(len(self.messages[i+1])):    #Log nachrichten
                 canvas.create_text(50, 100+30*j, text = f"- {self.messages[i+1][j]}", anchor="w")
                 
-            
+        index = -1
 
-            root.bind("<Return>", lambda e: Bild(i+1))
+        def weiter(event = None):
+            nonlocal index
+            index += 1
+            Bild(index)
+        
+        Bahnhof()
+
+        root.bind("<Return>", weiter)
 
         root.mainloop() 

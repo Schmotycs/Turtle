@@ -121,9 +121,6 @@ def run(csv_Path: Path):
             index_out -=1
 
 
-
-
-
     sim.Animation()
 
 
@@ -132,7 +129,3 @@ def run(csv_Path: Path):
 Pfad = Path("C:/Users/dek/Documents/Turtle/TabellenSauber/Testverbundin.csv")
 
 run(Pfad)
-
- #Kuppelungen hinzufügen (trip UND in/out time sind gleich)
-    #out kuppeln hinzufügen und rein/laus methoden updaten 
- #Log am Ende (wie viele Züge, wie viele Fehler etc)

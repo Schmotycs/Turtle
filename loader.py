@@ -7,3 +7,4 @@ def load_csv(csv_path):
     Daten = np.genfromtxt(csv_path, delimiter=";", dtype=int, skip_header=1)
     return Daten
     
+
