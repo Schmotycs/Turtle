@@ -1,7 +1,6 @@
 from pathlib import Path
 import loader
 import Model
-from collections import defaultdict
 
 
 
@@ -122,10 +121,12 @@ def run(csv_Path: Path):
 
 
     sim.Animation()
+    print(tor.Straf_Kosten)
 
 
 
 
-Pfad = Path("C:/Users/dek/Documents/Turtle/TabellenSauber/Testverbundin.csv")
+
+Pfad = Path("C:/Users/dek/Documents/Turtle/TestTrackSauber/track1_2.csv")
 
 run(Pfad)

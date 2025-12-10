@@ -1,0 +1,6 @@
+
+Index; Vehicle Type; Vehicle length; in trip; in position; in time; in gate; out trip; out position; out time; out gate
+0;Auto;0;-;1;00:06:00;(L);;0;00:06:10;(R)
+1;Auto;0;-;0;00:02:00;(R);;0;00:02:10;(L)
+2;Auto;0;-;1;00:02:00;(R);;1;00:06:10;(R)
+

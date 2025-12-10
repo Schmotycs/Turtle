@@ -4,14 +4,14 @@ import numpy as np
 import pandas as pd
 
 
-pfad = Path("C:/Users/dek/Documents/Turtle/Tabellen/Tabellen.csv")
+pfad = Path("C:/Users/dek/Documents/Turtle/TestTrack/Tabellen.csv")
 
 df = pd.read_csv(pfad, sep=";", header=None, encoding="utf-8")
 überschriften = df.iloc[:, 0].tolist()
 
 
-Eingabeordner = Path("C:/Users/dek/Documents/Turtle/Tabellen")
-Ausgabeordner = Path("C:/Users/dek/Documents/Turtle/TabellenSauber")
+Eingabeordner = Path("C:/Users/dek/Documents/Turtle/TestTrack")
+Ausgabeordner = Path("C:/Users/dek/Documents/Turtle/TestTrackSauber")
 
 
 for i in range(len(überschriften)):

@@ -8,6 +8,7 @@ class Tor:  #simmuliert ein Gleis und speichert die Zustände zum welchen Zeitpu
         self.max_length = max_length
         self.used_length = 0
         self.place =  deque()
+        self.Straf_Kosten = 0
 
     def reinlassen(self, turtle):
         if turtle.in_gate == 0:
@@ -31,8 +32,17 @@ class Tor:  #simmuliert ein Gleis und speichert die Zustände zum welchen Zeitpu
                 self.place.pop()
         else:
             self.place.remove(turtle.id)
+            #auf Deadlock prüfen
+
+            self.Straf_Kosten += 0.612500 #Coupling Middle
+
+
 
     def verbund_rauslassen(self, verbund, ids):
+        if self.verbund_position_order_prüfen(verbund) == False:
+            self.Straf_Kosten += 2.062500
+            print("Fehler")
+
         if self.verbund_kann_rauslaufen(verbund, ids) == True:
             if verbund.out_gate == 0:
                 for i in range(len(verbund.t_zsm)):
@@ -42,6 +52,23 @@ class Tor:  #simmuliert ein Gleis und speichert die Zustände zum welchen Zeitpu
         else:
             for id in ids:
                 self.place.remove(id)
+                self.Straf_Kosten += 0.612500 #Coupling Middle/ Man müsste prüfen ob WrongTimeOrder günstiger ist
+
+        
+
+
+    def verbund_position_order_prüfen(self, verbund):
+        akt_position = self.place.index(verbund.t_zsm[0].id)
+        if verbund.out_gate == 0:
+            for i in range(len(verbund.t_zsm)):
+                if self.place[akt_position+i] != verbund.t_zsm[i].id:
+                    return False
+        else:
+            for i in range(len(verbund.t_zsm)):
+                if self.place[akt_position-i] != verbund.t_zsm[i].id:
+                    return False
+
+
 
 
 
@@ -58,6 +85,7 @@ class Tor:  #simmuliert ein Gleis und speichert die Zustände zum welchen Zeitpu
             else:
                 return False
             
+            
     def verbund_kann_rauslaufen(self, verbund, ids):
         if verbund.out_gate == 0:
             for i in range(len(ids)):
@@ -69,6 +97,8 @@ class Tor:  #simmuliert ein Gleis und speichert die Zustände zum welchen Zeitpu
                 if self.place[-1-i] not in ids:
                     return False
             return True
+        
+
 
 class Turtle:   #Für jedes Fahrzeug wird ein Turtle Objekt erstellt, mit folgenden eigenschaftten:
     status = -1 #-1: T war noch nicht im Tor, 0: T ist gerade im Tor, 1: T war schon im Tor
