@@ -38,17 +38,18 @@ class Tor:  #simmuliert ein Gleis und speichert die Zustände zum welchen Zeitpu
 
 
 
-    def verbund_rauslassen(self, verbund, ids):
+    def verbund_rauslassen(self, verbund, ids, sim):
         if self.verbund_position_order_prüfen(verbund) == False:
             self.Straf_Kosten += 2.062500
-            print("Fehler")
+            sim.message_log(sim.index, f"Schildkrötenverund aus den Schildkröten {ids} ist beim ausfahren nicht in der richtigen Reihenfolge")
 
         if self.verbund_kann_rauslaufen(verbund, ids) == True:
             if verbund.out_gate == 0:
                 for i in range(len(verbund.t_zsm)):
                     self.place.popleft()
             else:
-                self.place.pop()
+                for i in range(len(verbund.t_zsm)):
+                    self.place.pop()
         else:
             for id in ids:
                 self.place.remove(id)
@@ -57,14 +58,18 @@ class Tor:  #simmuliert ein Gleis und speichert die Zustände zum welchen Zeitpu
         
 
 
-    def verbund_position_order_prüfen(self, verbund):
+    def verbund_position_order_prüfen(self, verbund):#Überprüfen ob beim rauslaufen die richtige Reihenfolge ist
         akt_position = self.place.index(verbund.t_zsm[0].id)
         if verbund.out_gate == 0:
             for i in range(len(verbund.t_zsm)):
+                if akt_position + i >= len(self.place):
+                    return False
                 if self.place[akt_position+i] != verbund.t_zsm[i].id:
                     return False
         else:
             for i in range(len(verbund.t_zsm)):
+                if akt_position - i < 0:
+                    return False
                 if self.place[akt_position-i] != verbund.t_zsm[i].id:
                     return False
 
@@ -244,7 +249,7 @@ class Simulation:
         
         self.tor.used_length -= verbund_length
 
-        self.tor.verbund_rauslassen(verbund, ids)
+        self.tor.verbund_rauslassen(verbund, ids, self)
 
         if verbund.out_gate == 0:
             self.states_log(self.tor.place.copy())
@@ -269,8 +274,6 @@ class Simulation:
 
     def states_log(self, state):
         self.states.append((state))
-
-
 
     def Animation(self):    #Animation wird erstellt
         r = 23
@@ -332,3 +335,5 @@ class Simulation:
         root.bind("<Return>", weiter)
 
         root.mainloop() 
+
+   

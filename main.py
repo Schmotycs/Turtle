@@ -41,7 +41,7 @@ def run(csv_Path: Path):
     for (_, out_time), ids in out_groups.items():
         id_out_pos = []
         for id in ids:
-            id_out_pos.append((id, Turtles[id].in_pos))
+            id_out_pos.append((id, Turtles[id].out_pos))
 
         id_out_pos.sort(key = lambda x: x[1])
         id_out_sort = [x[0] for x in id_out_pos]
@@ -121,12 +121,16 @@ def run(csv_Path: Path):
 
 
     sim.Animation()
-    print(tor.Straf_Kosten)
+    return tor.Straf_Kosten
 
-
-
-
-
-Pfad = Path("C:/Users/dek/Documents/Turtle/TestTrackSauber/track1_2.csv")
+Pfad = Path("C:/Users/dek/Documents/Turtle/TestTrackSauber/track5_1.csv")
 
 run(Pfad)
+
+
+
+#Strafkosten in Vektor
+#Kosten vergleichen mit richtigen Werten
+#
+        
+
