@@ -8,7 +8,8 @@ class Tor:  #simmuliert ein Gleis und speichert die Zustände zum welchen Zeitpu
         self.max_length = max_length
         self.used_length = 0
         self.place =  deque()
-        self.Straf_Kosten = 0
+        self.Straf_Kosten = 5*[0]
+        self.Kosten_pro_Stück = [0.612500, 2.062500, 0.367500, 0.735000, 0]  #0 = Kuppeln aus der Mitte, 1 = falsche Verbund reihenfolge, 2 = WrongTimeOrder, 3 = Deadlock, 4 = Bahnhofslänge
 
     def reinlassen(self, turtle):
         if turtle.in_gate == 0:
@@ -34,13 +35,13 @@ class Tor:  #simmuliert ein Gleis und speichert die Zustände zum welchen Zeitpu
             self.place.remove(turtle.id)
             #auf Deadlock prüfen
 
-            self.Straf_Kosten += 0.612500 #Coupling Middle
+            self.strafkosten_erhöhen(0) #Coupling Middle
 
 
 
     def verbund_rauslassen(self, verbund, ids, sim):
         if self.verbund_position_order_prüfen(verbund) == False:
-            self.Straf_Kosten += 2.062500
+            self.strafkosten_erhöhen(1) #Falsche Verbund reihenfolge
             sim.message_log(sim.index, f"Schildkrötenverund aus den Schildkröten {ids} ist beim ausfahren nicht in der richtigen Reihenfolge")
 
         if self.verbund_kann_rauslaufen(verbund, ids) == True:
@@ -53,7 +54,7 @@ class Tor:  #simmuliert ein Gleis und speichert die Zustände zum welchen Zeitpu
         else:
             for id in ids:
                 self.place.remove(id)
-                self.Straf_Kosten += 0.612500 #Coupling Middle/ Man müsste prüfen ob WrongTimeOrder günstiger ist
+                self.strafkosten_erhöhen(0) #Coupling Middle/ Man müsste prüfen ob WrongTimeOrder günstiger ist
 
         
 
@@ -72,10 +73,6 @@ class Tor:  #simmuliert ein Gleis und speichert die Zustände zum welchen Zeitpu
                     return False
                 if self.place[akt_position-i] != verbund.t_zsm[i].id:
                     return False
-
-
-
-
 
 
     def kann_rauslaufen(self, turtle):  #überprüft ob die Schildkröte einfach rauslaufen kann
@@ -103,6 +100,10 @@ class Tor:  #simmuliert ein Gleis und speichert die Zustände zum welchen Zeitpu
                     return False
             return True
         
+    def strafkosten_erhöhen(self, Kostenart): #0 = Kuppeln aus der Mitte, 1 = falsche Verbund reihenfolge, 2 = WrongTimeOrder, 3 = Deadlock, 4 = Bahnhofslänge
+        self.Straf_Kosten[Kostenart] += self.Kosten_pro_Stück[Kostenart]
+
+
 
 
 class Turtle:   #Für jedes Fahrzeug wird ein Turtle Objekt erstellt, mit folgenden eigenschaftten:

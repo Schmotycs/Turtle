@@ -120,17 +120,12 @@ def run(csv_Path: Path):
             index_out -=1
 
 
-    sim.Animation()
-    return tor.Straf_Kosten
+    #sim.Animation()
+    Kosten_gesamnt = sum(tor.Straf_Kosten)
+    return Kosten_gesamnt
 
 Pfad = Path("C:/Users/dek/Documents/Turtle/TestTrackSauber/track5_1.csv")
 
 run(Pfad)
 
-
-
-#Strafkosten in Vektor
-#Kosten vergleichen mit richtigen Werten
-#
-        
 
