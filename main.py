@@ -120,7 +120,7 @@ def run(csv_Path: Path):
             index_out -=1
 
 
-    #sim.Animation()
+    sim.Animation()
     Kosten_gesamnt = sum(tor.Straf_Kosten)
     return Kosten_gesamnt
 
