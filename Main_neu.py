@@ -4,6 +4,7 @@ import Model_neu
 
 def run(csv_Path: Path):
     data = loader.load_csv(csv_Path) #csv wird ausgelesen
+    Tor = Model_neu.Tor(260000)
       
 
     number_of_trains, _ = data.shape
@@ -73,13 +74,28 @@ def run(csv_Path: Path):
     for t in Turtles:
         id_to_out_pos[int(t.id)] = int(t.out_pos)
 
-    for ereignis in Ereignisse:
-        if Ereignisse[i][3] == 0:   #Einfahrt
+
+    for ereignis in Ereignisse: #sortieren nach pos_nr
+        if ereignis[3] == 0:   #Einfahrt
             ereignis[0].sort(key=lambda turtle_id: id_to_in_pos[turtle_id])
         else:
             ereignis[0].sort(key=lambda turtle_id: id_to_out_pos[turtle_id])
+    
+
+    for ereignis in Ereignisse:
+        if ereignis[3] == 0: #Einfahrt
+            for i in range(len(ereignis[0])):
+                Turtles.reinlaufen(sim)
+        else:
+            for i in range(len(ereignis[0])):
+                Tor.rauslassen(Turtles[ereignis[0][i]])
             
 
+
+
+
+
+            
 
 
 Pfad = Path("C:/Users/dek/Documents/Turtle/TabellenSauber/Testverbundin.csv")
