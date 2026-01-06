@@ -1,19 +1,20 @@
 from pathlib import Path
 import loader
-import Model_neu
+import Model
 
 def run(csv_Path: Path):
     data = loader.load_csv(csv_Path) #csv wird ausgelesen
-    Tor = Model_neu.Tor(260000)
+    tor = Model.Tor(1, 260000)
       
 
     number_of_trains, _ = data.shape
 
     Turtles = []
     for i in range(number_of_trains):   #für jede Zeile wird ein einzelnes Objekt erstellt
-        t = Model_neu.Turtle(data[i,0], data[i,1], data[i,2], data[i,3], data[i,4], data[i,5], data[i,6], data[i,7], data[i,8], data[i,9])
+        t = Model.Turtle(data[i,0], data[i,1], data[i,2], data[i,3], data[i,4], data[i,5], data[i,6], data[i,7], data[i,8], data[i,9])
         Turtles.append(t)
 
+    sim = Model.Simulation(tor, Turtles)
     Ereignisse = [] #Uhrzeit, Liste an IDs, Aktion (0 reinlaufen, 1 rauslaufen)
 
     order_in = []
@@ -84,18 +85,29 @@ def run(csv_Path: Path):
 
     for ereignis in Ereignisse:
         if ereignis[3] == 0: #Einfahrt
-            for i in range(len(ereignis[0])):
-                Turtles.reinlaufen(sim)
+            if len(ereignis[0]) == 1:
+                Turtles[ereignis[0][0]].reinlaufen(sim)
+            else:
+                verbund = []
+                for i in range(len(ereignis[0])):
+                    verbund.append(Turtles[ereignis[0][i]])
+                verbund_turtles = Model.Verbund(verbund)
+                verbund_turtles.reinlaufen(sim)
         else:
-            for i in range(len(ereignis[0])):
-                Tor.rauslassen(Turtles[ereignis[0][i]])
+            if len(ereignis[0]) == 1:
+                Turtles[ereignis[0][0]].rauslaufen(sim)
+            else:
+                verbund = []
+                for i in range(len(ereignis[0])):
+                    verbund.append(Turtles[ereignis[0][i]])
+                verbund_turtles = Model.Verbund(verbund)
+                verbund_turtles.rauslassen(sim)
             
+    sim.Animation()
+    Kosten_gesamt = sum(tor.Straf_Kosten)
+    return Kosten_gesamt
 
-
-
-
-
-            
+           
 
 
 Pfad = Path("C:/Users/dek/Documents/Turtle/TabellenSauber/Testverbundin.csv")
