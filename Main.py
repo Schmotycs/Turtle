@@ -4,7 +4,7 @@ import Model
 
 def run(csv_Path: Path):
     data = loader.load_csv(csv_Path) #csv wird ausgelesen
-    tor = Model.Tor(1, 260000)
+    tor = Model.Tor(1, 182000)
       
 
     number_of_trains, _ = data.shape
@@ -103,13 +103,13 @@ def run(csv_Path: Path):
                 verbund_turtles = Model.Verbund(verbund)
                 verbund_turtles.rauslassen(sim)
             
-    sim.Animation()
+    sim.Animation(Turtles)
     Kosten_gesamt = sum(tor.Straf_Kosten)
     return Kosten_gesamt
 
            
 
 
-Pfad = Path("C:/Users/dek/Documents/Turtle/TabellenSauber/Testverbundin.csv")
+Pfad = Path("C:/Users/dek/Documents/Turtle/TabellenSauber/Tabelle_10.csv")
 
 run(Pfad)
