@@ -1,0 +1,4 @@
+Index; Vehicle length; in trip; in position; in time; in gate; out trip; out position; out time; out gate
+0;100;1;0;30;0;1;0;300;0
+1;100;0;0;20;0;0;0;200;1
+2;100;2;0;10;0;2;0;250;0

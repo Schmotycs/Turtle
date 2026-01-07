@@ -1,5 +1,6 @@
 from collections import deque
 import tkinter as tk
+import colorsys
 
 
 class Tor:  #simmuliert ein Gleis und speichert die Zustände zum welchen Zeitpunkt welche Schildkröte da ist und wie und wo rausläuft
@@ -59,7 +60,7 @@ class Tor:  #simmuliert ein Gleis und speichert die Zustände zum welchen Zeitpu
         
 
 
-    def verbund_position_order_prüfen(self, verbund):#Überprüfen ob beim rauslaufen die richtige Reihenfolge ist
+    def verbund_position_order_prüfen(self, verbund):# Es wird Überprüft ob beim rauslaufen die richtige Reihenfolge ist
         akt_position = self.place.index(verbund.t_zsm[0].id)
         if verbund.out_gate == 0:
             for i in range(len(verbund.t_zsm)):
@@ -261,12 +262,6 @@ class Simulation:
         self.message_log(self.index, f"Schildkrötenverbund aus den Schildkröten {ids} lief um {verbund.out_time} aus {richtung} raus")
 
 
-
-        
-        
-
-
-
     def message_log(self, index, msg):  #speichert Texte um diese später wiederzugeben
         while len(self.messages) <= index:
             self.messages.append([])
@@ -275,9 +270,11 @@ class Simulation:
 
     def states_log(self, state):
         self.states.append((state))
+        
 
-    def Animation(self):    #Animation wird erstellt
-        r = 23
+
+    def Animation(self, Turtles):    #Animation wird erstellt
+        r = 27
         root = tk.Tk()
         höhe = 600
         breite = 600
@@ -286,7 +283,14 @@ class Simulation:
         canvas.pack()
         root.bind("<Return>", lambda e: Bild(0))
 
-
+        def hue_zu_rgb(farbton):
+            hue = (farbton % 360) / 360.0
+            r,g,b = colorsys.hsv_to_rgb(hue, 0.6, 0.6)
+            r = int(r*255)
+            g = int(g*255)
+            b = int(b*255)
+            return "#%02x%02x%02x" % (r, g, b)
+        
         def Bahnhof():
             canvas.delete("all")
 
@@ -315,10 +319,20 @@ class Simulation:
             
 
             for j in range(n):
-                x = 350 - 50*(n-j-1)
+                x = 425 - 65*(n-j-1)
+                #Bestimmung der Farbe
+                farbton = Turtles[self.states[i][j]].out_trip*(10**4)+Turtles[self.states[i][j]].out_time   #Fahrzeuges eines Verbundes beim rausfahren kriegen die gleiche Farbe
 
-                canvas.create_oval(x-r, Zughöhe+r, x+r, Zughöhe-r, fill="green")    #Ball
+                canvas.create_oval(x-r, Zughöhe+r, x+r, Zughöhe-r, fill=hue_zu_rgb(farbton))    #Ball
                 canvas.create_text(x,Zughöhe, text=str(self.states[i][j]))    #Nummer
+
+                if Turtles[self.states[i][j]].out_gate == 0:    #Pfeil zeigt in Richtung des out gates
+                    Richtung = tk.FIRST
+                else:
+                    Richtung = tk.LAST
+                canvas.create_line(x-15, Zughöhe-35, x+15, Zughöhe-35, arrow=Richtung)
+
+                canvas.create_text(x, Zughöhe+33, text=str(Turtles[self.states[i][j]].length))
 
 
             for j in range(len(self.messages[i+1])):    #Log nachrichten
