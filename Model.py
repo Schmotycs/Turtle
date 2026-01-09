@@ -4,13 +4,14 @@ import colorsys
 
 
 class Tor:  #simmuliert ein Gleis und speichert die Zustände zum welchen Zeitpunkt welche Schildkröte da ist und wie und wo rausläuft
-    def __init__(self, id, max_length):
+    def __init__(self, id, max_length, Turtles):
         self.id = id
         self.max_length = max_length
+        self.Turtles = Turtles
         self.used_length = 0
         self.place =  deque()
-        self.Straf_Kosten = 5*[0]
-        self.Kosten_pro_Stück = [0.612500, 2.062500, 0.367500, 0.735000, 0]  #0 = Kuppeln aus der Mitte, 1 = falsche Verbund reihenfolge, 2 = WrongTimeOrder, 3 = Deadlock, 4 = Bahnhofslänge
+        self.Straf_Kosten = 4*[0]
+        self.Kosten_pro_Stück = [0.612500, 2.062500, 0.367500, 0.735000]  #0 WrongTimeOrder, 1 = Deadlock, 2= falsche Reihenfolge im Verbund 3 = Bahnhofslänge
 
     def reinlassen(self, turtle):
         if turtle.in_gate == 0:
@@ -33,16 +34,15 @@ class Tor:  #simmuliert ein Gleis und speichert die Zustände zum welchen Zeitpu
             else:
                 self.place.pop()
         else:
+            self.prüfen_ob_Deadlock_oder_TimeOrder(turtle, self.Turtles)
             self.place.remove(turtle.id)
-            #auf Deadlock prüfen
 
-            self.strafkosten_erhöhen(0) #Coupling Middle
 
 
 
     def verbund_rauslassen(self, verbund, ids, sim):
         if self.verbund_position_order_prüfen(verbund) == False:
-            self.strafkosten_erhöhen(1) #Falsche Verbund reihenfolge
+            self.strafkosten_erhöhen(2,0) #Falsche Verbund reihenfolge
             sim.message_log(sim.index, f"Schildkrötenverund aus den Schildkröten {ids} ist beim ausfahren nicht in der richtigen Reihenfolge")
 
         if self.verbund_kann_rauslaufen(verbund, ids) == True:
@@ -54,8 +54,8 @@ class Tor:  #simmuliert ein Gleis und speichert die Zustände zum welchen Zeitpu
                     self.place.pop()
         else:
             for id in ids:
+                self.prüfen_ob_Deadlock_oder_TimeOrder(self.Turtles[id], self.Turtles)
                 self.place.remove(id)
-                self.strafkosten_erhöhen(0) #Coupling Middle/ Man müsste prüfen ob WrongTimeOrder günstiger ist
 
         
 
@@ -101,8 +101,50 @@ class Tor:  #simmuliert ein Gleis und speichert die Zustände zum welchen Zeitpu
                     return False
             return True
         
-    def strafkosten_erhöhen(self, Kostenart): #0 = Kuppeln aus der Mitte, 1 = falsche Verbund reihenfolge, 2 = WrongTimeOrder, 3 = Deadlock, 4 = Bahnhofslänge
-        self.Straf_Kosten[Kostenart] += self.Kosten_pro_Stück[Kostenart]
+    def prüfen_ob_Deadlock_oder_TimeOrder(self, turtle, Turtles): #es wird für ein einzelnes Fahrzeug überprüft woran es liegt das es nicht rausfahren kann(Deadlock oder WrongTimeOrder oder vielleicht beides)
+        anzahl_deadlocks = 0
+        anzahl_minuten_WrongTimeOrder = 0
+        if turtle.out_gate == 0:
+            fahrzeuge_links_von_turtle = self.place.index(turtle.id)
+            for i in range(fahrzeuge_links_von_turtle):
+                if Turtles[self.place[i]].out_gate == 0:
+                    anzahl_minuten_WrongTimeOrder += self.warte_zeit_WrongTimeOrder(turtle, Turtles[self.place[i]])
+                    self.strafkosten_erhöhen(0, anzahl_minuten_WrongTimeOrder)
+                else:
+                    self.strafkosten_erhöhen(1, 0)
+        else:
+            fahrzeuge_rechts_von_turtle = len(self.place)-self.place.index(turtle.id)
+            for i in range(fahrzeuge_rechts_von_turtle-1):
+                nächster = self.place.index(turtle.id)+i+1
+                if Turtles[nächster].out_gate == 1:
+                    anzahl_minuten_WrongTimeOrder += self.warte_zeit_WrongTimeOrder(turtle, Turtles[nächster])
+                    self.strafkosten_erhöhen(0, anzahl_minuten_WrongTimeOrder)
+                else:
+                    anzahl_deadlocks +=1
+                    self.strafkosten_erhöhen(1, 0)
+        
+
+    
+    def warte_zeit_WrongTimeOrder(self, turtle1, turtle2):
+        wartezeit = turtle2.out_time - turtle1.out_time
+        #print(wartezeit)
+        return wartezeit
+
+
+
+    def strafkosten_erhöhen(self, Kostenart, anzahl): #0 WrongTimeOrder, 1 = Deadlock, 2= falsche Reihenfolge im Verbund 3 = Bahnhofslänge
+        if Kostenart == 1 or 3:
+            self.Straf_Kosten[Kostenart] += anzahl
+        else:
+            self.Straf_Kosten[Kostenart] +=1
+
+    def strafkostenausgeben(self):
+        print(f"Es wurden insgesamt {self.Straf_Kosten[0]} Minuten gewartet und das kostete {self.Straf_Kosten[0]*self.Kosten_pro_Stück[0]}")
+        print(f"Es kamm insgesamt zu {self.Straf_Kosten[1]} Deadlocks und das kostete {self.Straf_Kosten[1]*self.Kosten_pro_Stück[1]}")
+        print(f"Es sind insgesamt {self.Straf_Kosten[2]} Verbünde in falscher Reihenfolge gefahren und das kostete {self.Straf_Kosten[2]*self.Kosten_pro_Stück[2]}")
+        print(f"Es konnten insgesamt {self.Straf_Kosten[3]} Fahrzeuge auf Grund von Überschreitung der Bahnhofslänge nicht im Bahnhof stehen das kostete {self.Straf_Kosten[3]*self.Kosten_pro_Stück[3]}")
+    
+
 
 
 
@@ -181,6 +223,7 @@ class Simulation:
 
         if self.tor.used_length > self.tor.max_length:  #überprüft die maximale Gleislänge
             self.message_log(self.index, f"Schildkröte {turtle.id} hat im Tor {self.tor.id} kein Platz")
+            self.tor.strafkosten_erhöhen(3,1)
 
         self.tor.reinlassen(turtle)
             
@@ -206,7 +249,8 @@ class Simulation:
 
         if self.tor.used_length > self.tor.max_length:  #überprüft die maximale Gleislänge
             self.message_log(self.index, f"Schildkrötenverbund aus den Schildkröten {ids} hat im Tor {self.tor.id} kein Platz")
-        
+            self.tor.strafkosten_erhöhen(3,len(verbund.t_zsm))
+
         self.tor.verbund_reinlassen(verbund)
 
         if verbund.in_gate == 0:

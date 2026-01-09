@@ -4,7 +4,7 @@ import Model
 
 def run(csv_Path: Path):
     data = loader.load_csv(csv_Path) #csv wird ausgelesen
-    tor = Model.Tor(1, 182000)
+    
       
 
     number_of_trains, _ = data.shape
@@ -14,6 +14,7 @@ def run(csv_Path: Path):
         t = Model.Turtle(data[i,0], data[i,1], data[i,2], data[i,3], data[i,4], data[i,5], data[i,6], data[i,7], data[i,8], data[i,9])
         Turtles.append(t)
 
+    tor = Model.Tor(1, 182000, Turtles)
     sim = Model.Simulation(tor, Turtles)
     Ereignisse = [] #Uhrzeit, Liste an IDs, Aktion (0 reinlaufen, 1 rauslaufen)
 
@@ -104,12 +105,13 @@ def run(csv_Path: Path):
                 verbund_turtles.rauslassen(sim)
             
     sim.Animation(Turtles)
-    Kosten_gesamt = sum(tor.Straf_Kosten)
-    return Kosten_gesamt
+    tor.strafkostenausgeben()
 
            
 
 
-Pfad = Path("C:/Users/dek/Documents/Turtle/TabellenSauber/Tabelle_10.csv")
+Pfad = Path("C:/Users/dek/Documents/Turtle/TabellenSauber/Tabelle_1.csv")
+
+#Verbund bahhhofslänge einzlen berechenen nicht zusammen
 
 run(Pfad)
