@@ -219,11 +219,7 @@ class Simulation:
     
     def reinlassen(self, turtle):
         self.index += 1
-        self.tor.used_length += turtle.length
-
-        if self.tor.used_length > self.tor.max_length:  #überprüft die maximale Gleislänge
-            self.message_log(self.index, f"Schildkröte {turtle.id} hat im Tor {self.tor.id} kein Platz")
-            self.tor.strafkosten_erhöhen(3,1)
+        self.prüfen_platz_im_Bahnhof(turtle)
 
         self.tor.reinlassen(turtle)
             
@@ -239,17 +235,11 @@ class Simulation:
 
     def verbund_reinlassen(self, verbund):
         self.index += 1
-        verbund_length = 0
         ids = []
         for i in range(len(verbund.t_zsm)):
-            verbund_length += verbund.t_zsm[i].length
             ids.append(int(verbund.t_zsm[i].id))
+            self.prüfen_platz_im_Bahnhof(verbund.t_zsm[i])
 
-        self.tor.used_length += verbund_length
-
-        if self.tor.used_length > self.tor.max_length:  #überprüft die maximale Gleislänge
-            self.message_log(self.index, f"Schildkrötenverbund aus den Schildkröten {ids} hat im Tor {self.tor.id} kein Platz")
-            self.tor.strafkosten_erhöhen(3,len(verbund.t_zsm))
 
         self.tor.verbund_reinlassen(verbund)
 
@@ -260,6 +250,14 @@ class Simulation:
             self.states_log(self.tor.place.copy())
             richtung = "rechts"
         self.message_log(self.index, f"Schildkrötenverbund aus den Schildkröten {ids} lief um {verbund.in_time} von {richtung} rein")
+
+    def prüfen_platz_im_Bahnhof(self, turtle):
+        self.tor.used_length += turtle.length
+
+        if self.tor.used_length > self.tor.max_length:  #überprüft die maximale Gleislänge
+            self.message_log(self.index, f"Schildkröte {turtle.id} hat im Tor {self.tor.id} kein Platz")
+            self.tor.strafkosten_erhöhen(3,1)
+        
 
     
     def rauslassen(self, turtle):   #Analog zu reinlassen
