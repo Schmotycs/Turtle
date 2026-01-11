@@ -364,8 +364,9 @@ class Simulation:
                 x = 425 - 65*(n-j-1)
                 #Bestimmung der Farbe
                 farbton = Turtles[self.states[i][j]].out_trip*(10**4)+Turtles[self.states[i][j]].out_time   #Fahrzeuges eines Verbundes beim rausfahren kriegen die gleiche Farbe
-
-                canvas.create_oval(x-r, Zughöhe+r, x+r, Zughöhe-r, fill=hue_zu_rgb(farbton))    #Ball
+                Farbe = "green"
+                #Farbe = hue_zu_rgb(farbton)
+                canvas.create_oval(x-r, Zughöhe+r, x+r, Zughöhe-r, fill=Farbe)    #Ball
                 canvas.create_text(x,Zughöhe, text=str(self.states[i][j]))    #Nummer
 
                 if Turtles[self.states[i][j]].out_gate == 0:    #Pfeil zeigt in Richtung des out gates

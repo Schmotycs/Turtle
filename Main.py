@@ -110,7 +110,7 @@ def run(csv_Path: Path):
            
 
 
-Pfad = Path("C:/Users/dek/Documents/Turtle/TabellenSauber/Tabelle_1.csv")
+Pfad = Path("C:/Users/dek/Documents/Turtle/TestFürGrafiken/FalschePosition.csv")
 
 #Verbund bahhhofslänge einzlen berechenen nicht zusammen
 
