@@ -1,6 +1,8 @@
 from collections import deque
 import tkinter as tk
 import colorsys
+from PIL import ImageGrab
+
 
 
 class Tor:  #simmuliert ein Gleis und speichert die Zustände zum welchen Zeitpunkt welche Schildkröte da ist und wie und wo rausläuft
@@ -43,7 +45,7 @@ class Tor:  #simmuliert ein Gleis und speichert die Zustände zum welchen Zeitpu
     def verbund_rauslassen(self, verbund, ids, sim):
         if self.verbund_position_order_prüfen(verbund) == False:
             self.strafkosten_erhöhen(2,0) #Falsche Verbund reihenfolge
-            sim.message_log(sim.index, f"Schildkrötenverund aus den Schildkröten {ids} ist beim ausfahren nicht in der richtigen Reihenfolge")
+            sim.message_log(sim.index, f"Fahrzeugverund aus den Fahrzeugen {ids} ist beim ausfahren nicht in der richtigen Reihenfolge")
 
         if self.verbund_kann_rauslaufen(verbund, ids) == True:
             if verbund.out_gate == 0:
@@ -171,7 +173,7 @@ class Turtle:   #Für jedes Fahrzeug wird ein Turtle Objekt erstellt, mit folgen
             sim.reinlassen(self)    #löst die reinlassfunktion von der Simulation auf
             self.status = 0
         else:
-            sim.message_log(sim.index, f"Schildkröte {self.id} kann nicht ein zweitesmal reinfahren")
+            sim.message_log(sim.index, f"Fahrzeuge {self.id} kann nicht ein zweitesmal reinfahren")
             
 
 
@@ -180,7 +182,7 @@ class Turtle:   #Für jedes Fahrzeug wird ein Turtle Objekt erstellt, mit folgen
             sim.rauslassen(self)
             self.status = 1
         else:
-            sim.message_log(sim.index, f"Schildkröte {self.id} kann nicht rauslaufen ohne im Tor zu sein")
+            sim.message_log(sim.index, f"Fahrzeug {self.id} kann nicht rauslaufen ohne im Tor zu sein")
 
 class Verbund:
     def __init__(self, t_zsm):
@@ -193,7 +195,7 @@ class Verbund:
     def reinlaufen(self, sim):
         for i in range(len(self.t_zsm)):
             if not self.t_zsm[i].status == -1:
-                sim.message_log(sim.index, f"Schildköte {self.t_zsm[i].id} kann nicht ein zweitesmal reinlaufen")
+                sim.message_log(sim.index, f"Fahrzeug {self.t_zsm[i].id} kann nicht ein zweitesmal reinlaufen")
                 return
         sim.verbund_reinlassen(self)
 
@@ -203,7 +205,7 @@ class Verbund:
     def rauslassen(self, sim):
         for i in range(len(self.t_zsm)):
             if not self.t_zsm[i].status == 0:
-                sim.message_log(sim.index, f"Schildköte {self.t_zsm[i].id} kann nicht rauslaufen ohne im Tor zu sein")
+                sim.message_log(sim.index, f"Fahrzeug {self.t_zsm[i].id} kann nicht rauslaufen ohne im Tor zu sein")
                 return
         sim.verbund_rauslassen(self)
 
@@ -230,7 +232,7 @@ class Simulation:
             self.states_log(self.tor.place.copy())
             richtung = "rechts"
 
-        self.message_log(self.index, f"Schildkröte {turtle.id} lief um {turtle.in_time} von {richtung} rein")
+        self.message_log(self.index, f"Fahrzeug {turtle.id} lief um {turtle.in_time} von {richtung} rein")
 
 
     def verbund_reinlassen(self, verbund):
@@ -249,13 +251,13 @@ class Simulation:
         else:
             self.states_log(self.tor.place.copy())
             richtung = "rechts"
-        self.message_log(self.index, f"Schildkrötenverbund aus den Schildkröten {ids} lief um {verbund.in_time} von {richtung} rein")
+        self.message_log(self.index, f"Fahrzeugverbund aus den Fahrzeugen {ids} lief um {verbund.in_time} von {richtung} rein")
 
     def prüfen_platz_im_Bahnhof(self, turtle):
         self.tor.used_length += turtle.length
 
         if self.tor.used_length > self.tor.max_length:  #überprüft die maximale Gleislänge
-            self.message_log(self.index, f"Schildkröte {turtle.id} hat im Tor {self.tor.id} kein Platz")
+            self.message_log(self.index, f"Fahrzeug {turtle.id} hat im Tor {self.tor.id} kein Platz")
             self.tor.strafkosten_erhöhen(3,1)
         
 
@@ -263,7 +265,7 @@ class Simulation:
     def rauslassen(self, turtle):   #Analog zu reinlassen
         self.index += 1
         if self.tor.kann_rauslaufen(turtle) == False:
-            self.message_log(self.index, f"Schildkröte {turtle.id} ist blockiert und möchte nach {turtle.out_gate} raus")
+            self.message_log(self.index, f"Fahrzeug {turtle.id} ist blockiert und möchte nach {turtle.out_gate} raus")
 
         self.tor.used_length -= turtle.length
 
@@ -276,7 +278,7 @@ class Simulation:
             self.states_log(self.tor.place.copy())
             richtung = "rechts"
 
-        self.message_log(self.index, f"Schildkröte {turtle.id} lief um {turtle.out_time} von {richtung} raus")
+        self.message_log(self.index, f"Fahrzeug {turtle.id} lief um {turtle.out_time} von {richtung} raus")
 
 
     def verbund_rauslassen(self, verbund):
@@ -289,7 +291,7 @@ class Simulation:
             ids.append(int(verbund.t_zsm[i].id))
 
         if self.tor.verbund_kann_rauslaufen(verbund, ids) == False:
-            self.message_log(self.index, f"Schildkörtenverbund aus den Schildkröten {ids} ist blockiert")
+            self.message_log(self.index, f"Fahrzeugverbund aus den Fahrzeugen {ids} ist blockiert")
         
         self.tor.used_length -= verbund_length
 
@@ -301,7 +303,7 @@ class Simulation:
         else:
             self.states_log(self.tor.place.copy())
             richtung = "rechts"
-        self.message_log(self.index, f"Schildkrötenverbund aus den Schildkröten {ids} lief um {verbund.out_time} aus {richtung} raus")
+        self.message_log(self.index, f"Fahrzeugverbund aus den Fahrzeugen {ids} lief um {verbund.out_time} aus {richtung} raus")
 
 
     def message_log(self, index, msg):  #speichert Texte um diese später wiederzugeben
@@ -345,6 +347,8 @@ class Simulation:
             while x_pos < breite:
                 canvas.create_rectangle(x_pos+3, Zughöhe+15, x_pos-3, Zughöhe-15, fill="sienna4")
                 x_pos += 30
+            
+            
 
 
         def Bild(i):
@@ -352,6 +356,7 @@ class Simulation:
             if i >= len(self.states):
                 return
             Bahnhof()
+            
 
             
             root.title(f"Aktion {i+1}/{len(self.states)}")
@@ -364,8 +369,8 @@ class Simulation:
                 x = 425 - 65*(n-j-1)
                 #Bestimmung der Farbe
                 farbton = Turtles[self.states[i][j]].out_trip*(10**4)+Turtles[self.states[i][j]].out_time   #Fahrzeuges eines Verbundes beim rausfahren kriegen die gleiche Farbe
-                Farbe = "green"
-                #Farbe = hue_zu_rgb(farbton)
+                #Farbe = "green"
+                Farbe = hue_zu_rgb(farbton)
                 canvas.create_oval(x-r, Zughöhe+r, x+r, Zughöhe-r, fill=Farbe)    #Ball
                 canvas.create_text(x,Zughöhe, text=str(self.states[i][j]))    #Nummer
 
@@ -375,12 +380,23 @@ class Simulation:
                     Richtung = tk.LAST
                 canvas.create_line(x-15, Zughöhe-35, x+15, Zughöhe-35, arrow=Richtung)
 
-                canvas.create_text(x, Zughöhe+33, text=str(Turtles[self.states[i][j]].length))
+                canvas.create_text(x, Zughöhe+33, text=str(Turtles[self.states[i][j]].out_time))
+                canvas.create_text(x, Zughöhe-45, text=str(Turtles[self.states[i][j]].out_pos))
+
 
 
             for j in range(len(self.messages[i+1])):    #Log nachrichten
                 canvas.create_text(50, 100+30*j, text = f"- {self.messages[i+1][j]}", anchor="w")
-                
+
+            canvas.update()
+            x = root.winfo_rootx() + canvas.winfo_x()
+            y = root.winfo_rooty() + canvas.winfo_y()
+            w = x + canvas.winfo_width()
+            h = y + canvas.winfo_height()
+            ImageGrab.grab(bbox=(x, y, w, h)).save(f"frame_{i+1:03d}.png")
+
+
+            
         index = -1
 
         def weiter(event = None):
