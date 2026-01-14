@@ -1,23 +1,67 @@
 from pathlib import Path
-import csv
-from main import run
+import pandas as pd
+from Main import run
+
+def säubern_und_prüfen(Eingabeordner, Ausgabeordner, Dateiname):
 
 
-Tabellennamen = Path("C:/Users/dek/Documents/Turtle/TestTrack/Tabellen.csv")
-Tabellenüberschriften = []
-with open(Tabellennamen, newline="", encoding="utf-8", ) as df:
-    reader = csv.reader(df, delimiter=";")
-    for zeile in reader:
-        Tabellenüberschriften.append(zeile[0].strip())
+    Eingabedatei = Eingabeordner / Dateiname
+    Ausgabedatei = Ausgabeordner / Dateiname
 
-ausgabedatei = Path("C:/Users/dek/Documents/Turtle/TestTrackSauber/Kosten.csv")
+    df = pd.read_csv(Eingabedatei, sep =";", encoding="utf-8")
+    df = df.drop(columns=[" Vehicle Type"])
+    df[" in gate"] = df[" in gate"].replace({"(L)": 0,"(R)": 1})
+    df[" out gate"] = df[" out gate"].replace({"(L)": 0,"(R)": 1})
+    df[" in time"] = pd.to_timedelta(df[" in time"].astype(str)).dt.total_seconds().astype(int)
+    df[" out time"] = pd.to_timedelta(df[" out time"].astype(str)).dt.total_seconds().astype(int)
+
+    #print(f"Tabelle {Dateiname} wurde gesäubert")
+
+    for Zeile, Spalte in df.iterrows():
+        Einfahrtszeit = Spalte[" in time"]
+        Ausfahrtszeit = Spalte[" out time"]
+
+        if Einfahrtszeit > Ausfahrtszeit:
+            print("Ausfahrtszeit darf nicht kleiner als Einfahrtszeit sein")
+        elif Einfahrtszeit == Ausfahrtszeit:
+            df.at[Zeile, " out time"] += 1
+            print(f"In der Datei {Dateiname} wurde die Ausfahrtszeit von {Zeile} wurde um 1 erhöht")
+
+    #print(f"Tabelle {Dateiname} wurde überprüft")
+
+    df.to_csv(Ausgabedatei, sep=";", index=False, encoding="utf-8")
+    print(f"Tabelle {Dateiname} wurde gespeichert")
 
 
-with ausgabedatei.open(mode="w", newline="", encoding="utf-8") as f:
-    writer = csv.writer(f,delimiter=";")
-    writer.writerow(["Track", "Kosten"])
-    for name in Tabellenüberschriften:
-        Pfad = Path(rf"C:/Users/dek/Documents/Turtle/TestTrackSauber/{name}")
+def run_für_ganzen_ordner(ordner_original, ordner_sauber):
+    ordner_sauber.mkdir(parents=True, exist_ok=True)
+    ergebnisse = []
+    
+    for datei in sorted(ordner_sauber.iterdir(), key=lambda p: p.name):
+        try:
+            k1, k2, k3, k4 = run(datei)
+            k5 = k1 +k2 +k3 +k4
+            ergebnisse.append([datei.name, k1, k2, k3, k4, k5])
+        except Exception as e:
+            print(f"Fehler {datei.name}: {e}")
+            continue
 
-        kosten = run(Pfad)
-        writer.writerow([name, kosten])
+    df_ergebnisse = pd.DataFrame(ergebnisse, columns=["dateiname", "TimeOrder", "Deadlock", "Postion", "Bahnhofslänge", "Summe"])
+    df_ergebnisse.to_csv("Auswertung.csv", sep=";", index = False, encoding ="utf-8")
+
+
+
+def säubern_ganzen_ordner(ordner_original, ordner_sauber):
+    ordner_sauber.mkdir(parents=True, exist_ok=True)
+
+    for datei in sorted(ordner_original.iterdir(), key=lambda p: p.name):
+        säubern_und_prüfen(ordner_original, ordner_sauber, datei.name)
+
+
+
+
+original = Path(r"C:\Users\dek\Documents\tracks539\csv")
+sauber = Path(r"C:\Users\dek\Documents\tracks539\csv_sauber")
+
+#säubern_ganzen_ordner(original, sauber)
+run_für_ganzen_ordner(original, sauber)

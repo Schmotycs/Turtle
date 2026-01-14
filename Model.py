@@ -11,7 +11,7 @@ class Tor:  #simmuliert ein Gleis und speichert die Zustände zum welchen Zeitpu
         self.used_length = 0
         self.place =  deque()
         self.Straf_Kosten = 4*[0]
-        self.Kosten_pro_Stück = [0.612500, 2.062500, 0.367500, 0.735000]  #0 WrongTimeOrder, 1 = Deadlock, 2= falsche Reihenfolge im Verbund 3 = Bahnhofslänge
+        self.Kosten_pro_Stück = [0.3675, 0.735, 2.0625, 0.4000]  #0 WrongTimeOrder, 1 = Deadlock, 2= falsche Reihenfolge im Verbund 3 = Bahnhofslänge
 
     def reinlassen(self, turtle):
         if turtle.in_gate == 0:
@@ -127,13 +127,12 @@ class Tor:  #simmuliert ein Gleis und speichert die Zustände zum welchen Zeitpu
     
     def warte_zeit_WrongTimeOrder(self, turtle1, turtle2):
         wartezeit = turtle2.out_time - turtle1.out_time
-        #print(wartezeit)
         return wartezeit
 
 
 
     def strafkosten_erhöhen(self, Kostenart, anzahl): #0 WrongTimeOrder, 1 = Deadlock, 2= falsche Reihenfolge im Verbund 3 = Bahnhofslänge
-        if Kostenart == 1 or 3:
+        if Kostenart == 0 :
             self.Straf_Kosten[Kostenart] += anzahl
         else:
             self.Straf_Kosten[Kostenart] +=1

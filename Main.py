@@ -4,8 +4,6 @@ import Model
 
 def run(csv_Path: Path):
     data = loader.load_csv(csv_Path) #csv wird ausgelesen
-    
-      
 
     number_of_trains, _ = data.shape
 
@@ -104,14 +102,15 @@ def run(csv_Path: Path):
                 verbund_turtles = Model.Verbund(verbund)
                 verbund_turtles.rauslassen(sim)
             
-    sim.Animation(Turtles)
-    tor.strafkostenausgeben()
+    #sim.Animation(Turtles)
+    #tor.strafkostenausgeben()
+    return(tor.Straf_Kosten[0], tor.Straf_Kosten[1], tor.Straf_Kosten[2], tor.Straf_Kosten[3],)
 
            
 
 
 Pfad = Path("C:/Users/dek/Documents/Turtle/TestFürGrafiken/FalschePosition.csv")
 
-#Verbund bahhhofslänge einzlen berechenen nicht zusammen
+
 
 run(Pfad)
