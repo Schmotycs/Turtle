@@ -10,7 +10,8 @@ class Tor:  #simmuliert ein Gleis und speichert die Zustände zum welchen Zeitpu
         self.Turtles = Turtles
         self.used_length = 0
         self.place =  deque()
-        self.Straf_Kosten = 4*[0]
+        self.Strafkosten = []
+        self.Strafen_Anzahl = 4*[0]
         self.Kosten_pro_Stück = [0.3675, 0.735, 2.0625, 0.4000]  #0 WrongTimeOrder, 1 = Deadlock, 2= falsche Reihenfolge im Verbund 3 = Bahnhofslänge
 
     def reinlassen(self, turtle):
@@ -133,15 +134,20 @@ class Tor:  #simmuliert ein Gleis und speichert die Zustände zum welchen Zeitpu
 
     def strafkosten_erhöhen(self, Kostenart, anzahl): #0 WrongTimeOrder, 1 = Deadlock, 2= falsche Reihenfolge im Verbund 3 = Bahnhofslänge
         if Kostenart == 0 :
-            self.Straf_Kosten[Kostenart] += anzahl
+            self.Strafen_Anzahl[Kostenart] += anzahl
         else:
-            self.Straf_Kosten[Kostenart] +=1
+            self.Strafen_Anzahl[Kostenart] +=1
+    
+    def Strafkostenberechnen(self):
+        for i in range(len(self.Strafen_Anzahl)):
+            self.Strafkosten.append(self.Strafen_Anzahl[i]*self.Kosten_pro_Stück[i])
+        print(self.Strafkosten)
 
-    def strafkostenausgeben(self):
-        print(f"Es wurden insgesamt {self.Straf_Kosten[0]} Minuten gewartet und das kostete {self.Straf_Kosten[0]*self.Kosten_pro_Stück[0]}")
-        print(f"Es kamm insgesamt zu {self.Straf_Kosten[1]} Deadlocks und das kostete {self.Straf_Kosten[1]*self.Kosten_pro_Stück[1]}")
-        print(f"Es sind insgesamt {self.Straf_Kosten[2]} Verbünde in falscher Reihenfolge gefahren und das kostete {self.Straf_Kosten[2]*self.Kosten_pro_Stück[2]}")
-        print(f"Es konnten insgesamt {self.Straf_Kosten[3]} Fahrzeuge auf Grund von Überschreitung der Bahnhofslänge nicht im Bahnhof stehen das kostete {self.Straf_Kosten[3]*self.Kosten_pro_Stück[3]}")
+    #def strafkostenausgeben(self):
+    #    print(f"Es wurden insgesamt {self.Strafen_Anzahl[0]} Minuten gewartet und das kostete {self.Straf_Kosten[0]*self.Kosten_pro_Stück[0]}")
+     #   print(f"Es kamm insgesamt zu {self.Strafen_Anzahl[1]} Deadlocks und das kostete {self.Straf_Kosten[1]*self.Kosten_pro_Stück[1]}")
+      #  print(f"Es sind insgesamt {self.Strafen_Anzahl[2]} Verbünde in falscher Reihenfolge gefahren und das kostete {self.Straf_Kosten[2]*self.Kosten_pro_Stück[2]}")
+       # print(f"Es konnten insgesamt {self.Strafen_Anzahl[3]} Fahrzeuge auf Grund von Überschreitung der Bahnhofslänge nicht im Bahnhof stehen das kostete {self.Straf_Kosten[3]*self.Kosten_pro_Stück[3]}")
     
 
 

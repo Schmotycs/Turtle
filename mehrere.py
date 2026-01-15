@@ -33,20 +33,20 @@ def säubern_und_prüfen(Eingabeordner, Ausgabeordner, Dateiname):
     print(f"Tabelle {Dateiname} wurde gespeichert")
 
 
-def run_für_ganzen_ordner(ordner_original, ordner_sauber):
+def run_für_ganzen_ordner(ordner_sauber):
     ordner_sauber.mkdir(parents=True, exist_ok=True)
     ergebnisse = []
     
     for datei in sorted(ordner_sauber.iterdir(), key=lambda p: p.name):
         try:
-            k1, k2, k3, k4 = run(datei)
-            k5 = k1 +k2 +k3 +k4
-            ergebnisse.append([datei.name, k1, k2, k3, k4, k5])
+            Anzhal_Züge, WrongTimeOrder, Deadlock, Position, Bahnhofslänge = run(datei)
+            Summe = WrongTimeOrder + Deadlock + Position + Bahnhofslänge
+            ergebnisse.append([datei.name, Anzhal_Züge, WrongTimeOrder, Deadlock, Position, Bahnhofslänge, Summe])
         except Exception as e:
             print(f"Fehler {datei.name}: {e}")
             continue
 
-    df_ergebnisse = pd.DataFrame(ergebnisse, columns=["dateiname", "TimeOrder", "Deadlock", "Postion", "Bahnhofslänge", "Summe"])
+    df_ergebnisse = pd.DataFrame(ergebnisse, columns=["dateiname","Anzahl Züge" "TimeOrder", "Deadlock", "Postion", "Bahnhofslänge", "Summe"])
     df_ergebnisse.to_csv("Auswertung.csv", sep=";", index = False, encoding ="utf-8")
 
 
@@ -64,4 +64,4 @@ original = Path(r"C:\Users\dek\Documents\tracks539\csv")
 sauber = Path(r"C:\Users\dek\Documents\tracks539\csv_sauber")
 
 #säubern_ganzen_ordner(original, sauber)
-run_für_ganzen_ordner(original, sauber)
+run_für_ganzen_ordner(sauber)

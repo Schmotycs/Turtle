@@ -103,13 +103,13 @@ def run(csv_Path: Path):
                 verbund_turtles.rauslassen(sim)
             
     #sim.Animation(Turtles)
-    #tor.strafkostenausgeben()
-    return(tor.Straf_Kosten[0], tor.Straf_Kosten[1], tor.Straf_Kosten[2], tor.Straf_Kosten[3],)
+    tor.Strafkostenberechnen()
+    return(number_of_trains, tor.Strafkosten[0], tor.Strafkosten[1], tor.Strafkosten[2], tor.Strafkosten[3])
 
            
 
 
-Pfad = Path("C:/Users/dek/Documents/Turtle/TestFürGrafiken/FalschePosition.csv")
+Pfad = Path(r"C:\Users\dek\Documents\Turtle\TabellenSauber\Tabelle_1.csv")
 
 
 
