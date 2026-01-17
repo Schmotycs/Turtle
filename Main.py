@@ -81,6 +81,13 @@ def run(csv_Path: Path):
         else:
             ereignis[0].sort(key=lambda turtle_id: id_to_out_pos[turtle_id])
     
+    anzahl_verbünde_in = 0
+    anzahl_verbünde_out = 0
+    durchschnitt_verbundslänge_in = 0
+    durchschnit_verbunslänge_out = 0
+    Turtles_im_verbund_in = 0
+    Turtles_im_verbund_out = 0
+
 
     for ereignis in Ereignisse:
         if ereignis[3] == 0: #Einfahrt
@@ -90,8 +97,10 @@ def run(csv_Path: Path):
                 verbund = []
                 for i in range(len(ereignis[0])):
                     verbund.append(Turtles[ereignis[0][i]])
+                    Turtles_im_verbund_in += 1
                 verbund_turtles = Model.Verbund(verbund)
                 verbund_turtles.reinlaufen(sim)
+                anzahl_verbünde_in += 1
         else:
             if len(ereignis[0]) == 1:
                 Turtles[ereignis[0][0]].rauslaufen(sim)
@@ -99,12 +108,18 @@ def run(csv_Path: Path):
                 verbund = []
                 for i in range(len(ereignis[0])):
                     verbund.append(Turtles[ereignis[0][i]])
+                    Turtles_im_verbund_out += 1
                 verbund_turtles = Model.Verbund(verbund)
                 verbund_turtles.rauslassen(sim)
-            
+                anzahl_verbünde_out += 1
+
+    durchschnitt_verbundslänge_in = number_of_trains/(number_of_trains-Turtles_im_verbund_in)
+    durchschnit_verbunslänge_out = number_of_trains/(number_of_trains-Turtles_im_verbund_out)
+  
+    
     #sim.Animation(Turtles)
     tor.Strafkostenberechnen()
-    return(number_of_trains, tor.Strafkosten[0], tor.Strafkosten[1], tor.Strafkosten[2], tor.Strafkosten[3])
+    return(number_of_trains, tor.Strafkosten[0], tor.Strafkosten[1], tor.Strafkosten[2], tor.Strafkosten[3], anzahl_verbünde_in, anzahl_verbünde_out, durchschnitt_verbundslänge_in, durchschnit_verbunslänge_out)
 
            
 

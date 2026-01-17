@@ -38,15 +38,12 @@ def run_für_ganzen_ordner(ordner_sauber):
     ergebnisse = []
     
     for datei in sorted(ordner_sauber.iterdir(), key=lambda p: p.name):
-        try:
-            Anzhal_Züge, WrongTimeOrder, Deadlock, Position, Bahnhofslänge = run(datei)
-            Summe = WrongTimeOrder + Deadlock + Position + Bahnhofslänge
-            ergebnisse.append([datei.name, Anzhal_Züge, WrongTimeOrder, Deadlock, Position, Bahnhofslänge, Summe])
-        except Exception as e:
-            print(f"Fehler {datei.name}: {e}")
-            continue
+        Anzhal_Züge, WrongTimeOrder, Deadlock, Position, Bahnhofslänge, anzahl_verbünde_in, anzahl_verbünde_out, durchschnittslänge_verbünde_in, durchschnittslänge_verbünde_out = run(datei)
+        Summe = WrongTimeOrder + Deadlock + Position + Bahnhofslänge
+        ergebnisse.append([datei.name, Anzhal_Züge, WrongTimeOrder, Deadlock, Position, Bahnhofslänge, Summe, anzahl_verbünde_in, anzahl_verbünde_out, durchschnittslänge_verbünde_in, durchschnittslänge_verbünde_out])
 
-    df_ergebnisse = pd.DataFrame(ergebnisse, columns=["dateiname","Anzahl Züge" "TimeOrder", "Deadlock", "Postion", "Bahnhofslänge", "Summe"])
+
+    df_ergebnisse = pd.DataFrame(ergebnisse, columns=["dateiname","Anzahl Züge", "TimeOrder", "Deadlock", "Postion", "Bahnhofslänge", "Summe", "Anzahl Verbünde in", "Anzahl Verbünde out", "Länge Verbünde in", "Länge Verbünde out"])
     df_ergebnisse.to_csv("Auswertung.csv", sep=";", index = False, encoding ="utf-8")
 
 

@@ -141,7 +141,7 @@ class Tor:  #simmuliert ein Gleis und speichert die Zustände zum welchen Zeitpu
     def Strafkostenberechnen(self):
         for i in range(len(self.Strafen_Anzahl)):
             self.Strafkosten.append(self.Strafen_Anzahl[i]*self.Kosten_pro_Stück[i])
-        print(self.Strafkosten)
+        #print(self.Strafkosten)
 
     #def strafkostenausgeben(self):
     #    print(f"Es wurden insgesamt {self.Strafen_Anzahl[0]} Minuten gewartet und das kostete {self.Straf_Kosten[0]*self.Kosten_pro_Stück[0]}")
