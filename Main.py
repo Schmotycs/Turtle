@@ -128,4 +128,4 @@ Pfad = Path(r"C:\Users\dek\Documents\Turtle\TabellenSauber\Tabelle_1.csv")
 
 
 
-run(Pfad)
+#run(Pfad)
