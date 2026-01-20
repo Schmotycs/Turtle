@@ -57,11 +57,8 @@ def säubern_ganzen_ordner(ordner_original, ordner_sauber):
 
 
 def Werte_normieren(data):
-    Daten = np.genfromtxt(data, delimiter=";", skip_header=1)
-    anzahl_zeilen_ges, anzahl_spalten_ges = Daten.shape
-
     namen = np.genfromtxt(data, delimiter =";", skip_header = 1, dtype=str, usecols=0)
-    werte = np.genfromtxt(data, delimiter = ";", skip_header = 1, usecols=range(1, anzahl_spalten_ges))
+    werte = np.genfromtxt(data, delimiter = ";", skip_header = 1, usecols=np.s_[1:])
 
     anzahl_zeilen, anzahl_spalten = werte.shape
     
