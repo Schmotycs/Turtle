@@ -100,7 +100,7 @@ def run(csv_Path: Path):
                     Turtles_im_verbund_in += 1
                 verbund_turtles = Model.Verbund(verbund)
                 verbund_turtles.reinlaufen(sim)
-                anzahl_verbünde_in += 1
+            anzahl_verbünde_in += 1
         else:
             if len(ereignis[0]) == 1:
                 Turtles[ereignis[0][0]].rauslaufen(sim)
@@ -111,10 +111,10 @@ def run(csv_Path: Path):
                     Turtles_im_verbund_out += 1
                 verbund_turtles = Model.Verbund(verbund)
                 verbund_turtles.rauslassen(sim)
-                anzahl_verbünde_out += 1
+            anzahl_verbünde_out += 1
 
-    durchschnitt_verbundslänge_in = number_of_trains/(number_of_trains-Turtles_im_verbund_in)
-    durchschnit_verbunslänge_out = number_of_trains/(number_of_trains-Turtles_im_verbund_out)
+    durchschnitt_verbundslänge_in = number_of_trains/anzahl_verbünde_in
+    durchschnit_verbunslänge_out = number_of_trains/anzahl_verbünde_out
   
     
     #sim.Animation(Turtles)

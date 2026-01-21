@@ -41,10 +41,10 @@ def run_für_ganzen_ordner(ordner_sauber):
     for datei in sorted(ordner_sauber.iterdir(), key=lambda p: p.name):
         Anzahl_Züge, WrongTimeOrder, Deadlock, Position, Bahnhofslänge, anzahl_verbünde_in, anzahl_verbünde_out, durchschnittslänge_verbünde_in, durchschnittslänge_verbünde_out = run(datei)
         Summe = WrongTimeOrder + Deadlock + Position + Bahnhofslänge
-        ergebnisse.append([datei.name, Anzahl_Züge, WrongTimeOrder, Deadlock, Position, Bahnhofslänge, Summe, anzahl_verbünde_in, anzahl_verbünde_out, durchschnittslänge_verbünde_in, durchschnittslänge_verbünde_out])
+        ergebnisse.append([datei.name, Anzahl_Züge, WrongTimeOrder, Deadlock, Position, Bahnhofslänge, anzahl_verbünde_in, anzahl_verbünde_out, durchschnittslänge_verbünde_in, durchschnittslänge_verbünde_out, Summe])
 
 
-    df_ergebnisse = pd.DataFrame(ergebnisse, columns=["dateiname","Anzahl Züge", "TimeOrder", "Deadlock", "Postion", "Bahnhofslänge", "Summe", "Anzahl Verbünde in", "Anzahl Verbünde out", "Länge Verbünde in", "Länge Verbünde out"])
+    df_ergebnisse = pd.DataFrame(ergebnisse, columns=["dateiname","Anzahl Züge", "TimeOrder", "Deadlock", "Postion", "Bahnhofslänge", "Anzahl Verbünde in", "Anzahl Verbünde out", "Länge Verbünde in", "Länge Verbünde out", "Summe"])
     df_ergebnisse.to_csv("Auswertung.csv", sep=";", index = False, encoding ="utf-8")
 
 
@@ -58,7 +58,8 @@ def säubern_ganzen_ordner(ordner_original, ordner_sauber):
 
 def Werte_normieren(data):
     namen = np.genfromtxt(data, delimiter =";", skip_header = 1, dtype=str, usecols=0)
-    werte = np.genfromtxt(data, delimiter = ";", skip_header = 1, usecols=np.s_[1:])
+    werte = np.genfromtxt(data, delimiter = ";", skip_header = 1, dtype=float)
+    werte = werte[:, 1:]
 
     anzahl_zeilen, anzahl_spalten = werte.shape
     
@@ -95,7 +96,7 @@ def Werte_normieren(data):
             zeile.append(z)
         ergebnisse_ges.append(zeile)
 
-    df_ergebnisse = pd.DataFrame(ergebnisse_ges, columns=["dateiname","Anzahl Züge", "TimeOrder", "Deadlock", "Postion", "Bahnhofslänge", "Summe", "Anzahl Verbünde in", "Anzahl Verbünde out", "Länge Verbünde in", "Länge Verbünde out"])
+    df_ergebnisse = pd.DataFrame(ergebnisse_ges, columns=["dateiname","Anzahl Züge", "TimeOrder", "Deadlock", "Postion", "Bahnhofslänge", "Anzahl Verbünde in", "Anzahl Verbünde out", "Länge Verbünde in", "Länge Verbünde out", "Summen"])
     df_ergebnisse.to_csv("genormte_werte.csv", sep = ";", index= False, encoding="utf-8")
 
 
@@ -105,5 +106,5 @@ sauber = Path(r"C:\Users\dek\Documents\tracks539\csv_sauber")
 #säubern_ganzen_ordner(original, sauber)
 #run_für_ganzen_ordner(sauber)
 
-Pfad_Auswertung = Path(r"C:\Users\devin\OneDrive\Desktop\Projekte\Turtle\Auswertung.csv")
+Pfad_Auswertung = Path(r"C:\Users\dek\Documents\Turtle\Auswertung.csv")
 Werte_normieren(Pfad_Auswertung)
