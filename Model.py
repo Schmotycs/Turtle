@@ -13,6 +13,7 @@ class Tor:  #simmuliert ein Gleis und speichert die Zustände zum welchen Zeitpu
         self.Strafkosten = []
         self.Strafen_Anzahl = 4*[0]
         self.Kosten_pro_Stück = [0.3675, 0.735, 2.0625, 0.4000]  #0 WrongTimeOrder, 1 = Deadlock, 2= falsche Reihenfolge im Verbund 3 = Bahnhofslänge
+        self.Gesamtauslastung = 0
 
     def reinlassen(self, turtle):
         if turtle.in_gate == 0:
@@ -39,8 +40,6 @@ class Tor:  #simmuliert ein Gleis und speichert die Zustände zum welchen Zeitpu
             self.place.remove(turtle.id)
 
 
-
-
     def verbund_rauslassen(self, verbund, ids, sim):
         if self.verbund_position_order_prüfen(verbund) == False:
             self.strafkosten_erhöhen(2,0) #Falsche Verbund reihenfolge
@@ -57,8 +56,6 @@ class Tor:  #simmuliert ein Gleis und speichert die Zustände zum welchen Zeitpu
             for id in ids:
                 self.prüfen_ob_Deadlock_oder_TimeOrder(self.Turtles[id], self.Turtles)
                 self.place.remove(id)
-
-        
 
 
     def verbund_position_order_prüfen(self, verbund):# Es wird Überprüft ob beim rauslaufen die richtige Reihenfolge ist
@@ -141,17 +138,16 @@ class Tor:  #simmuliert ein Gleis und speichert die Zustände zum welchen Zeitpu
     def Strafkostenberechnen(self):
         for i in range(len(self.Strafen_Anzahl)):
             self.Strafkosten.append(self.Strafen_Anzahl[i]*self.Kosten_pro_Stück[i])
-        #print(self.Strafkosten)
 
-    #def strafkostenausgeben(self):
-    #    print(f"Es wurden insgesamt {self.Strafen_Anzahl[0]} Minuten gewartet und das kostete {self.Straf_Kosten[0]*self.Kosten_pro_Stück[0]}")
-     #   print(f"Es kamm insgesamt zu {self.Strafen_Anzahl[1]} Deadlocks und das kostete {self.Straf_Kosten[1]*self.Kosten_pro_Stück[1]}")
-      #  print(f"Es sind insgesamt {self.Strafen_Anzahl[2]} Verbünde in falscher Reihenfolge gefahren und das kostete {self.Straf_Kosten[2]*self.Kosten_pro_Stück[2]}")
-       # print(f"Es konnten insgesamt {self.Strafen_Anzahl[3]} Fahrzeuge auf Grund von Überschreitung der Bahnhofslänge nicht im Bahnhof stehen das kostete {self.Straf_Kosten[3]*self.Kosten_pro_Stück[3]}")
+    def strafkostenausgeben(self):
+        print(f"Es wurden insgesamt {self.Strafen_Anzahl[0]} Minuten gewartet und das kostete {self.Straf_Kosten[0]*self.Kosten_pro_Stück[0]}")
+        print(f"Es kamm insgesamt zu {self.Strafen_Anzahl[1]} Deadlocks und das kostete {self.Straf_Kosten[1]*self.Kosten_pro_Stück[1]}")
+        print(f"Es sind insgesamt {self.Strafen_Anzahl[2]} Verbünde in falscher Reihenfolge gefahren und das kostete {self.Straf_Kosten[2]*self.Kosten_pro_Stück[2]}")
+        print(f"Es konnten insgesamt {self.Strafen_Anzahl[3]} Fahrzeuge auf Grund von Überschreitung der Bahnhofslänge nicht im Bahnhof stehen das kostete {self.Straf_Kosten[3]*self.Kosten_pro_Stück[3]}")
     
-
-
-
+    def Berechnug_Gesamt_auslastung(self):
+        for t in self.Turtles:
+            self.Gesamtauslastung += t.length * (t.out_time- t.in_time)
 
 
 class Turtle:   #Für jedes Fahrzeug wird ein Turtle Objekt erstellt, mit folgenden eigenschaftten:

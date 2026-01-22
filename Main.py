@@ -14,7 +14,7 @@ def run(csv_Path: Path):
 
     tor = Model.Tor(1, 182000, Turtles)
     sim = Model.Simulation(tor, Turtles)
-    Ereignisse = [] #Uhrzeit, Liste an IDs, Aktion (0 reinlaufen, 1 rauslaufen)
+    Ereignisse = [] #Liste IDs, Zeit, Aktion (0 reinlaufen, 1 rauslaufen)
 
     order_in = []
     for i in range(number_of_trains):
@@ -33,7 +33,7 @@ def run(csv_Path: Path):
         else:
             letzter = order_in_new[-1]
             if in_time == letzter[1] and in_trip == letzter[2]:
-                letzter[0].append(turtle_id)                               #Turtles mit gleicher inTrip und intime werden vereinigt
+                letzter[0].append(turtle_id)                               #Turtles mit gleicher inTrip und inTime werden vereinigt
             else:
                 order_in_new.append([[turtle_id], in_time, in_trip])
 
@@ -115,17 +115,20 @@ def run(csv_Path: Path):
 
     durchschnitt_verbundslänge_in = number_of_trains/anzahl_verbünde_in
     durchschnit_verbunslänge_out = number_of_trains/anzahl_verbünde_out
-  
+    tor.Berechnug_Gesamt_auslastung()
+    Gesamt_Zeit = Ereignisse[-1][1]-Ereignisse[0][1]
+    Relative_Gesamtauslastung =tor.Gesamtauslastung/(Gesamt_Zeit*tor.max_length)
     
+
     #sim.Animation(Turtles)
     tor.Strafkostenberechnen()
-    return(number_of_trains, tor.Strafkosten[0], tor.Strafkosten[1], tor.Strafkosten[2], tor.Strafkosten[3], anzahl_verbünde_in, anzahl_verbünde_out, durchschnitt_verbundslänge_in, durchschnit_verbunslänge_out)
+    return(number_of_trains, tor.Strafen_Anzahl[0], tor.Strafen_Anzahl[1], tor.Strafen_Anzahl[2], tor.Strafen_Anzahl[3], durchschnitt_verbundslänge_in, durchschnit_verbunslänge_out, Relative_Gesamtauslastung)
 
            
 
 
-Pfad = Path(r"C:\Users\dek\Documents\Turtle\TabellenSauber\Tabelle_1.csv")
+Pfad = Path(r"C:\Users\dek\Documents\Turtle\TabellenSauber\Tabelle_18.csv")
 
 
 
-#run(Pfad)
+run(Pfad)
