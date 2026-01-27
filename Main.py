@@ -2,6 +2,7 @@ from pathlib import Path
 import loader
 import Model
 
+
 def run(csv_Path: Path):
     data = loader.load_csv(csv_Path) #csv wird ausgelesen
 
@@ -80,13 +81,6 @@ def run(csv_Path: Path):
             ereignis[0].sort(key=lambda turtle_id: id_to_in_pos[turtle_id])
         else:
             ereignis[0].sort(key=lambda turtle_id: id_to_out_pos[turtle_id])
-    
-    anzahl_verbünde_in = 0
-    anzahl_verbünde_out = 0
-    durchschnitt_verbundslänge_in = 0
-    durchschnit_verbunslänge_out = 0
-    Turtles_im_verbund_in = 0
-    Turtles_im_verbund_out = 0
 
 
     for ereignis in Ereignisse:
@@ -97,10 +91,8 @@ def run(csv_Path: Path):
                 verbund = []
                 for i in range(len(ereignis[0])):
                     verbund.append(Turtles[ereignis[0][i]])
-                    Turtles_im_verbund_in += 1
                 verbund_turtles = Model.Verbund(verbund)
                 verbund_turtles.reinlaufen(sim)
-            anzahl_verbünde_in += 1
         else:
             if len(ereignis[0]) == 1:
                 Turtles[ereignis[0][0]].rauslaufen(sim)
@@ -108,27 +100,18 @@ def run(csv_Path: Path):
                 verbund = []
                 for i in range(len(ereignis[0])):
                     verbund.append(Turtles[ereignis[0][i]])
-                    Turtles_im_verbund_out += 1
                 verbund_turtles = Model.Verbund(verbund)
                 verbund_turtles.rauslassen(sim)
-            anzahl_verbünde_out += 1
-
-    durchschnitt_verbundslänge_in = number_of_trains/anzahl_verbünde_in
-    durchschnit_verbunslänge_out = number_of_trains/anzahl_verbünde_out
-    tor.Berechnug_Gesamt_auslastung()
-    Gesamt_Zeit = Ereignisse[-1][1]-Ereignisse[0][1]
-    Relative_Gesamtauslastung =tor.Gesamtauslastung/(Gesamt_Zeit*tor.max_length)
-    
 
     #sim.Animation(Turtles)
+    sim.ZeitDiagramm(Turtles)
     tor.Strafkostenberechnen()
-    return(number_of_trains, tor.Strafen_Anzahl[0], tor.Strafen_Anzahl[1], tor.Strafen_Anzahl[2], tor.Strafen_Anzahl[3], durchschnitt_verbundslänge_in, durchschnit_verbunslänge_out, Relative_Gesamtauslastung)
+    
+    return(tor.Strafen_Anzahl[0], tor.Strafen_Anzahl[1], tor.Strafen_Anzahl[2], tor.Strafen_Anzahl[3])
 
            
 
 
 Pfad = Path(r"C:\Users\dek\Documents\Turtle\TabellenSauber\Tabelle_18.csv")
-
-
 
 run(Pfad)
