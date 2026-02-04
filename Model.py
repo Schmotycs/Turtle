@@ -394,53 +394,6 @@ class Simulation:
 
         root.bind("<Return>", weiter)
 
-        root.mainloop() 
-
-
-    def ZeitDiagramm(self, Turtles):
-        print("Diagramm")
-        fig, ax = plt.subplots(figsize=(6, 8))
-        x_inout_left  = 0
-        x_in_tor      = 1
-        x_inout_right = 2
-
-        for turtle in Turtles:
-            in_time = turtle.in_time
-            out_time = turtle.out_time
-            length = turtle.length
-            in_gate = turtle.in_gate
-            out_gate = turtle.out_gate
-
-            color = "tab:blue"
-
-            x_in  = x_inout_left if in_gate == 0 else x_inout_right
-            x_out = x_inout_left if out_gate == 0 else x_inout_right
-
-            ax.scatter(x_in, in_time,  color=color, marker="v")  # rein
-            ax.scatter(x_out, out_time, color=color, marker="^")  # raus
-
-            x_center = x_in_tor
-            x_start  = x_center - length / 2
-            x_width  = length
-
-            y_start  = in_time
-            y_height = out_time - in_time
-
-            ax.broken_barh(
-                [(x_start, x_width)],
-                (y_start, y_height),
-                facecolors=color,
-                alpha=0.8,
-            )
-
-        ax.set_xticks([x_inout_left, x_in_tor, x_inout_right])
-        ax.set_xticklabels(["Ein/Ausgänge (L)", "Im Tor", "Ein/Ausgänge (R)"])
-        ax.set_ylabel("Zeit")
-        ax.set_xlabel("Bereich")
-        ax.invert_yaxis()
-
-        plt.tight_layout()
-        plt.show()
-                    
+        root.mainloop()
 
    

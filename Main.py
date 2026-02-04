@@ -104,7 +104,6 @@ def run(csv_Path: Path):
                 verbund_turtles.rauslassen(sim)
 
     #sim.Animation(Turtles)
-    sim.ZeitDiagramm(Turtles)
     tor.Strafkostenberechnen()
     
     return(tor.Strafen_Anzahl[0], tor.Strafen_Anzahl[1], tor.Strafen_Anzahl[2], tor.Strafen_Anzahl[3])

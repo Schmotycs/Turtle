@@ -9,7 +9,7 @@ import os
 
 def k_means(csv_path, k, x_achse, y_achse):
     Daten = np.genfromtxt(csv_path, delimiter=";", dtype=float, skip_header=1)
-    X = Daten[:,1:5]
+    X = Daten[:,2:6]
     kmeans = KMeans(n_clusters= k, init="k-means++", max_iter=300, n_init=10, random_state=23)
     y_kmeans = kmeans.fit_predict(X)
     
@@ -25,7 +25,7 @@ def k_means(csv_path, k, x_achse, y_achse):
 
     print(f"Silhouttenscore von k = {k}: {sil}")
     #print(f"Stats = {stats}")
-    #print(f"{Schnitt_pro_Spalte}")
+    print(f"{Schnitt_pro_Spalte}")
     
     Diagramm_2(X, y_kmeans, x_achse, y_achse, k)
 
@@ -46,15 +46,11 @@ def Diagramm_2(X, y_kmeans, x_achse, y_achse, k):
 
     
 
-Pfad = Path(r"C:\Users\dek\Documents\Turtle\genormte_werte.csv")
+Pfad = Path(r"C:\Users\dek\Documents\Turtle\genormte_werte_2.csv")
 
 #0: WrongTimeOrder
 #1: Deadlock
 #2: Position
 #3: Bahnhofslänge
 
-for i in range(4):
-    j = 0
-    while j<i:
-        k_means(Pfad, 3, i, j)
-        j += 1
+k_means(Pfad, 3, 1,2)
