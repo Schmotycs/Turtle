@@ -92,6 +92,8 @@ def run(csv_Path: Path):
                 for i in range(len(ereignis[0])):
                     verbund.append(Turtles[ereignis[0][i]])
                 verbund_turtles = Model.Verbund(verbund)
+                if verbund_turtles.in_gate == 0:
+                    verbund_turtles.t_zsm.reverse()
                 verbund_turtles.reinlaufen(sim)
         else:
             if len(ereignis[0]) == 1:
@@ -101,16 +103,18 @@ def run(csv_Path: Path):
                 for i in range(len(ereignis[0])):
                     verbund.append(Turtles[ereignis[0][i]])
                 verbund_turtles = Model.Verbund(verbund)
+                if verbund_turtles.out_gate == 1:
+                    verbund_turtles.t_zsm.reverse()
                 verbund_turtles.rauslassen(sim)
 
-    #sim.Animation(Turtles)
-    tor.Strafkostenberechnen()
+    sim.Animation(Turtles)
+    #tor.Strafkostenberechnen()
     
     return(tor.Strafen_Anzahl[0], tor.Strafen_Anzahl[1], tor.Strafen_Anzahl[2], tor.Strafen_Anzahl[3])
 
            
 
 
-Pfad = Path(r"C:\Users\dek\Documents\Turtle\TabellenSauber\Tabelle_18.csv")
+Pfad = Path(r"C:\Users\dek\Documents\Turtle\TestFürGrafiken\Test_verbund.csv")
 
 run(Pfad)

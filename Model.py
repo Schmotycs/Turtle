@@ -377,8 +377,8 @@ class Simulation:
                     Richtung = tk.LAST
                 canvas.create_line(x-15, Zughöhe-35, x+15, Zughöhe-35, arrow=Richtung)
 
-                canvas.create_text(x, Zughöhe+33, text=str(Turtles[self.states[i][j]].length))
-
+                canvas.create_text(x, Zughöhe+33, text=str(Turtles[self.states[i][j]].in_pos))
+                canvas.create_text(x, Zughöhe+44, text=str(Turtles[self.states[i][j]].out_pos))
 
             for j in range(len(self.messages[i+1])):    #Log nachrichten
                 canvas.create_text(50, 100+30*j, text = f"- {self.messages[i+1][j]}", anchor="w")
