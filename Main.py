@@ -1,9 +1,9 @@
 from pathlib import Path
 import loader
 import Model
+import Bahnhöfe
 
-
-def run(csv_Path: Path):
+def run(csv_Path: Path, Tor_length_man, Auto):
     data = loader.load_csv(csv_Path) #csv wird ausgelesen
 
     number_of_trains, _ = data.shape
@@ -13,7 +13,14 @@ def run(csv_Path: Path):
         t = Model.Turtle(data[i,0], data[i,1], data[i,2], data[i,3], data[i,4], data[i,5], data[i,6], data[i,7], data[i,8], data[i,9])
         Turtles.append(t)
 
-    tor = Model.Tor(1, 182000, Turtles)
+    if Auto == 1:
+        Pfad_String = csv_Path.name
+        _, _, Bahnhofsname = Pfad_String.partition(".csv_")
+        Bahnhofsname, _, _ = Bahnhofsname.partition(".csv")
+        Tor_length = Bahnhöfe(Bahnhofsname)
+    else:
+        Tor_length = Tor_length_man
+    tor = Model.Tor(1, Tor_length, Turtles)
     sim = Model.Simulation(tor, Turtles)
     Ereignisse = [] #Liste IDs, Zeit, Aktion (0 reinlaufen, 1 rauslaufen)
 
@@ -108,13 +115,13 @@ def run(csv_Path: Path):
                 verbund_turtles.rauslassen(sim)
 
     sim.Animation(Turtles)
-    #tor.Strafkostenberechnen()
     
     return(tor.Strafen_Anzahl[0], tor.Strafen_Anzahl[1], tor.Strafen_Anzahl[2], tor.Strafen_Anzahl[3])
 
            
 
 
-Pfad = Path(r"C:\Users\dek\Documents\Turtle\TestFürGrafiken\Test_verbund.csv")
+Pfad = Path(r"C:/Users/dek/Documents/tracks/454NC_sauber/track_2_50.csv_AR_Haltestelle_1.csv")
 
-run(Pfad)
+
+run(Pfad, 182000, 1)

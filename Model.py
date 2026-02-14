@@ -1,7 +1,6 @@
 from collections import deque
 import tkinter as tk
 import colorsys
-import matplotlib.pyplot as plt
 
 
 class Tor:  #simmuliert ein Gleis und speichert die Zustände zum welchen Zeitpunkt welche Schildkröte da ist und wie und wo rausläuft
@@ -101,7 +100,6 @@ class Tor:  #simmuliert ein Gleis und speichert die Zustände zum welchen Zeitpu
             return True
         
     def prüfen_ob_Deadlock_oder_TimeOrder(self, turtle, Turtles): #es wird für ein einzelnes Fahrzeug überprüft woran es liegt das es nicht rausfahren kann(Deadlock oder WrongTimeOrder oder vielleicht beides)
-        anzahl_deadlocks = 0
         anzahl_minuten_WrongTimeOrder = 0
         if turtle.out_gate == 0:
             fahrzeuge_links_von_turtle = self.place.index(turtle.id)
@@ -119,7 +117,6 @@ class Tor:  #simmuliert ein Gleis und speichert die Zustände zum welchen Zeitpu
                     anzahl_minuten_WrongTimeOrder += self.warte_zeit_WrongTimeOrder(turtle, Turtles[nächster])
                     self.strafkosten_erhöhen(0, anzahl_minuten_WrongTimeOrder)
                 else:
-                    anzahl_deadlocks +=1
                     self.strafkosten_erhöhen(1, 0)
         
 
@@ -366,8 +363,8 @@ class Simulation:
                 x = 425 - 65*(n-j-1)
                 #Bestimmung der Farbe
                 farbton = Turtles[self.states[i][j]].out_trip*(10**4)+Turtles[self.states[i][j]].out_time   #Fahrzeuges eines Verbundes beim rausfahren kriegen die gleiche Farbe
-                Farbe = "green"
-                #Farbe = hue_zu_rgb(farbton)
+                #Farbe = "green"
+                Farbe = hue_zu_rgb(farbton)
                 canvas.create_oval(x-r, Zughöhe+r, x+r, Zughöhe-r, fill=Farbe)    #Ball
                 canvas.create_text(x,Zughöhe, text=str(self.states[i][j]))    #Nummer
 
@@ -377,8 +374,7 @@ class Simulation:
                     Richtung = tk.LAST
                 canvas.create_line(x-15, Zughöhe-35, x+15, Zughöhe-35, arrow=Richtung)
 
-                canvas.create_text(x, Zughöhe+33, text=str(Turtles[self.states[i][j]].in_pos))
-                canvas.create_text(x, Zughöhe+44, text=str(Turtles[self.states[i][j]].out_pos))
+                canvas.create_text(x, Zughöhe+33, text=str(Turtles[self.states[i][j]].out_pos))
 
             for j in range(len(self.messages[i+1])):    #Log nachrichten
                 canvas.create_text(50, 100+30*j, text = f"- {self.messages[i+1][j]}", anchor="w")

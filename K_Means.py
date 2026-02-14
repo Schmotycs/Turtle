@@ -46,7 +46,7 @@ def Diagramm_2(X, y_kmeans, x_achse, y_achse, k):
 
     
 
-Pfad = Path(r"C:\Users\dek\Documents\Turtle\genormte_werte_2.csv")
+Pfad = Path(r"C:\Users\dek\Documents\Turtle\genormte_werte_1.csv")
 
 #0: WrongTimeOrder
 #1: Deadlock
