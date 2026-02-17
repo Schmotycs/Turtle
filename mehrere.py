@@ -10,9 +10,9 @@ def säubern_und_prüfen(Eingabeordner, Ausgabeordner, Dateiname):
     Ausgabedatei = Ausgabeordner / Dateiname
     print(Dateiname)
 
-    with Eingabedatei.open(encoding="utf-8") as ein:
-        _ = ein.readline()
-        meta = ein.readline()
+    with Eingabedatei.open(encoding="utf-8") as eingabe:
+        _ = eingabe.readline()
+        meta = eingabe.readline()
         meta = meta.strip()
         abschnitte = meta.split()
         Location = abschnitte[1].rstrip(",")
@@ -42,7 +42,8 @@ def run_für_ganzen_ordner(ordner_sauber, k):
     ergebnisse = []
     
     for datei in sorted(ordner_sauber.iterdir(), key=lambda p: p.name):
-        WrongTimeOrder, Deadlock, Position, Bahnhofslänge = run(datei)
+        print(f"der datei name ist {datei}")
+        WrongTimeOrder, Deadlock, Position, Bahnhofslänge = run(datei, 182000, 1)
         dateiname, Bahnhof = datei.name.split(".csv",1)
         Bahnhof = Bahnhof[1:-4]
 
@@ -107,11 +108,11 @@ def Werte_normieren(data, k):
     df_ergebnisse.to_csv(f"genormte_werte_{k}.csv", sep = ";", index= False, encoding="utf-8")
 
 
-original = Path(r"C:\Users\dek\Documents\tracks\454NC")
-sauber = Path(r"C:\Users\dek\Documents\tracks\454NC_sauber")
+original = Path(r"C:\Users\dek\Documents\tracks\dsb")
+sauber = Path(r"C:\Users\dek\Documents\tracks\dsb_sauber")
 
 #säubern_ganzen_ordner(original, sauber)
-#run_für_ganzen_ordner(sauber, 2)
+run_für_ganzen_ordner(sauber, "dsb")
 
-Pfad_Auswertung = Path(r"C:\Users\dek\Documents\Turtle\Auswertung_2.csv")
-Werte_normieren(Pfad_Auswertung, 2)
+Pfad_Auswertung = Path(r"C:\Users\dek\Documents\Turtle\Auswertung_dsb.csv")
+Werte_normieren(Pfad_Auswertung, "dsb")

@@ -22,5 +22,7 @@ def Bahnhofslänge(Bahnhof):
         länge = 360
     if Bahnhof == "AR_Haltestelle_6":
         länge = 263
-    return länge
+    else:
+        länge = 180
+    return länge*100
 

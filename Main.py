@@ -17,7 +17,7 @@ def run(csv_Path: Path, Tor_length_man, Auto):
         Pfad_String = csv_Path.name
         _, _, Bahnhofsname = Pfad_String.partition(".csv_")
         Bahnhofsname, _, _ = Bahnhofsname.partition(".csv")
-        Tor_length = Bahnhöfe(Bahnhofsname)
+        Tor_length = Bahnhöfe.Bahnhofslänge(Bahnhofsname)
     else:
         Tor_length = Tor_length_man
     tor = Model.Tor(1, Tor_length, Turtles)
@@ -114,7 +114,7 @@ def run(csv_Path: Path, Tor_length_man, Auto):
                     verbund_turtles.t_zsm.reverse()
                 verbund_turtles.rauslassen(sim)
 
-    sim.Animation(Turtles)
+    #sim.Animation(Turtles)
     
     return(tor.Strafen_Anzahl[0], tor.Strafen_Anzahl[1], tor.Strafen_Anzahl[2], tor.Strafen_Anzahl[3])
 

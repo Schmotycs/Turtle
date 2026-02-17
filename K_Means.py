@@ -23,11 +23,12 @@ def k_means(csv_path, k, x_achse, y_achse):
     count = df["cluster"].value_counts().sort_index()
     Schnitt_pro_Spalte.loc["count"] = count
 
-    print(f"Silhouttenscore von k = {k}: {sil}")
+    #print(f"Silhouttenscore von k = {k}: {sil}")
     #print(f"Stats = {stats}")
-    print(f"{Schnitt_pro_Spalte}")
+    #print(f"{Schnitt_pro_Spalte}")
     
-    Diagramm_2(X, y_kmeans, x_achse, y_achse, k)
+    #Diagramm_2(X, y_kmeans, x_achse, y_achse, k)
+    return sil
 
     
 def Diagramm_2(X, y_kmeans, x_achse, y_achse, k):
@@ -46,11 +47,24 @@ def Diagramm_2(X, y_kmeans, x_achse, y_achse, k):
 
     
 
-Pfad = Path(r"C:\Users\dek\Documents\Turtle\genormte_werte_1.csv")
+Pfad = Path(r"C:\Users\dek\Documents\Turtle\genormte_werte_track454.csv")
 
 #0: WrongTimeOrder
 #1: Deadlock
 #2: Position
 #3: Bahnhofslänge
 
-k_means(Pfad, 3, 1,2)
+x = []
+y = []
+for k in range(5):
+    sil = k_means(Pfad, k+2, 1,2)
+    x.append(k+2)
+    y.append(sil)
+
+
+fig, ax = plt.subplots()
+ax.plot(x,y, linewidth =2.0)
+ax.set(xlim=(2, 6), xticks=np.arange(2, 6.01,1),
+       ylim=(0, 1), yticks=np.arange(0,1.01,0.1))
+ax.grid(True)
+plt.show()
