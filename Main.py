@@ -3,7 +3,7 @@ import loader
 import Model
 import Bahnhöfe
 
-def run(csv_Path: Path, Tor_length_man, Auto):
+def run(csv_Path: Path, Auto,  Tor_length_man = 182000):
     data = loader.load_csv(csv_Path) #csv wird ausgelesen
 
     number_of_trains, _ = data.shape
@@ -115,13 +115,13 @@ def run(csv_Path: Path, Tor_length_man, Auto):
                 verbund_turtles.rauslassen(sim)
 
     #sim.Animation(Turtles)
-    
-    return(tor.Strafen_Anzahl[0], tor.Strafen_Anzahl[1], tor.Strafen_Anzahl[2], tor.Strafen_Anzahl[3])
+    Konflikte_Ges = sum(tor.Strafen_Anzahl)-tor.Strafen_Anzahl[0]
+    return(tor.Strafen_Anzahl[0], tor.Strafen_Anzahl[1], tor.Strafen_Anzahl[2], tor.Strafen_Anzahl[3], number_of_trains, Konflikte_Ges)
 
            
 
 
-Pfad = Path(r"C:/Users/dek/Documents/tracks/454NC_sauber/track_2_50.csv_AR_Haltestelle_1.csv")
+Pfad = Path(r"C:\Users\dek\Documents\Turtle\TestFürGrafiken\Beispielt 6.csv")
 
 
-run(Pfad, 182000, 1)
+#run(Pfad, 0)    #Pfad; bei 1 wird länge aus dem Titel genommen bei 0 automatisch 182M; (opt andere länge als 182m)

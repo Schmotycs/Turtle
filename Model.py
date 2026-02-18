@@ -317,9 +317,9 @@ class Simulation:
     def Animation(self, Turtles):    #Animation wird erstellt
         r = 27
         root = tk.Tk()
-        höhe = 600
+        höhe = 300
         breite = 600
-        Zughöhe = 350
+        Zughöhe = 200
         canvas = tk.Canvas(root, width=breite, height=höhe)
         canvas.pack()
         root.bind("<Return>", lambda e: Bild(0))
@@ -377,7 +377,7 @@ class Simulation:
                 canvas.create_text(x, Zughöhe+33, text=str(Turtles[self.states[i][j]].out_pos))
 
             for j in range(len(self.messages[i+1])):    #Log nachrichten
-                canvas.create_text(50, 100+30*j, text = f"- {self.messages[i+1][j]}", anchor="w")
+                canvas.create_text(50, 50+30*j, text = f"- {self.messages[i+1][j]}", anchor="w")
                 
         index = -1
 
@@ -387,7 +387,6 @@ class Simulation:
             Bild(index)
         
         Bahnhof()
-
         root.bind("<Return>", weiter)
 
         root.mainloop()

@@ -1,7 +1,5 @@
 import csv
 from pathlib import Path
-import numpy as np
-
 
 
 Pfad = Path("C:/Users/dek/Documents/Turtle/E20-44521.xml-251002-110553-opt_1-tracks.csv")
