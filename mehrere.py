@@ -118,7 +118,7 @@ def Werte_normieren(data, k):
     df_ergebnisse.to_csv(f"genormte_werte_{k}.csv", sep = ";", index= False, encoding="utf-8")
     return Varianz_der_Spalten, Mittelwert_der_Spalten
 
-Dateinamen = "csv"
+Dateinamen = "track539"
 
 original = Path(rf"C:\Users\dek\Documents\tracks\{Dateinamen}")
 sauber = Path(rf"C:\Users\dek\Documents\tracks\{Dateinamen}_sauber")
@@ -126,51 +126,51 @@ sauber = Path(rf"C:\Users\dek\Documents\tracks\{Dateinamen}_sauber")
 
 
 
-AnzahlZüge, AnzahlKonflikte = run_für_ganzen_ordner(sauber, Dateinamen)
+# AnzahlZüge, AnzahlKonflikte = run_für_ganzen_ordner(sauber, Dateinamen)
 
-Pfad_Auswertung = Path(rf"C:\Users\dek\Documents\Turtle\Auswertung_{Dateinamen}.csv")
-Pfad_genormt = Path(rf"C:\Users\dek\Documents\Turtle\genormte_werte_{Dateinamen}.csv")
+# Pfad_Auswertung = Path(rf"C:\Users\dek\Documents\Turtle\Auswertung\Auswertung_{Dateinamen}.csv")
+# Pfad_genormt = Path(rf"C:\Users\dek\Documents\Turtle\genormte_werte\genormte_werte_{Dateinamen}.csv")
 
-Varianzen, Mittelwerte = Werte_normieren(Pfad_Auswertung, Dateinamen)
-
-
-
-#SSE Diagramm
-k = []
-y = []
-
-for i in range(10):
-    sil, sse = K_Means.k_means(Pfad_genormt, i+2, Varianzen, Mittelwerte)
-    k.append(i+2)
-    y.append(sse)
+# Varianzen, Mittelwerte = Werte_normieren(Pfad_Auswertung, Dateinamen)
 
 
-fig, ax = plt.subplots()
-ax.plot(k,y)
-ax.set(xlim=(2, 6), xticks=np.arange(2, max(k)+2,1),
-       ylim=(0, max(y)*1.1))
-ax.grid(True)
-ax.set_xlabel('k')
-ax.set_ylabel('SSE(k)')
-ax.set_title('Summe der quadrierten inneren Abstände')
-plt.show()
+
+# #SSE Diagramm
+# k = []
+# y = []
+
+# for i in range(10):
+#     sil, sse = K_Means.k_means(Pfad_genormt, i+2, Varianzen, Mittelwerte)
+#     k.append(i+2)
+#     y.append(sse)
 
 
-#2 Konflikte gegenüberstellen
-K_Means.k_means(Pfad_genormt, 4, x_achse=0, y_achse=1, Diagramm=True, sil = True)
+# fig, ax = plt.subplots()
+# ax.plot(k,y)
+# ax.set(xlim=(2, 6), xticks=np.arange(2, max(k)+2,1),
+#        ylim=(0, max(y)*1.1))
+# ax.grid(True)
+# ax.set_xlabel('k')
+# ax.set_ylabel('SSE(k)')
+# ax.set_title('Summe der quadrierten inneren Abstände')
+# plt.show()
 
 
-#AnzahlZüge gegen Konfliktanzahl
-punkte = list(zip(AnzahlZüge, AnzahlKonflikte))
-häufigkeit = Counter(punkte)
-größen = [häufigkeit[(x,y)] * 5 for x,y in punkte] 
-fig, ax = plt.subplots(figsize=(8, 6))
-ax.scatter(AnzahlZüge, AnzahlKonflikte, s = größen)
-ax.set_xlabel('Anzahl der Züge')
-ax.set_ylabel('Anzahl Konflikte (gesamt)')
-ax.set_title('Konflikte vs. Anzahl Züge')
-ax.grid(True)
-plt.tight_layout()
-plt.show()
+# #2 Konflikte gegenüberstellen
+# K_Means.k_means(Pfad_genormt, 4, x_achse=0, y_achse=1, Diagramm=True, sil = True)
+
+
+# #AnzahlZüge gegen Konfliktanzahl
+# punkte = list(zip(AnzahlZüge, AnzahlKonflikte))
+# häufigkeit = Counter(punkte)
+# größen = [häufigkeit[(x,y)] * 5 for x,y in punkte] 
+# fig, ax = plt.subplots(figsize=(8, 6))
+# ax.scatter(AnzahlZüge, AnzahlKonflikte, s = größen)
+# ax.set_xlabel('Anzahl der Züge')
+# ax.set_ylabel('Anzahl Konflikte (gesamt)')
+# ax.set_title('Konflikte vs. Anzahl Züge')
+# ax.grid(True)
+# plt.tight_layout()
+# plt.show()
 
 
