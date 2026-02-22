@@ -1,0 +1,6 @@
+
+Location STR_Stop_6, trackType NoConstraint, cost 0.000000 / 0.000000
+
+Index; Vehicle Type; Vehicle length; in trip; in position; in time; in gate; out trip; out position; out time; out gate
+0;MFA;59000;-;0;00:12:48;(R);-;0;00:12:48;(R)
+

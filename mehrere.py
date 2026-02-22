@@ -43,25 +43,20 @@ def säubern_und_prüfen(Eingabeordner, Ausgabeordner, Dateiname):
 def run_für_ganzen_ordner(ordner_sauber, k):
     ordner_sauber.mkdir(parents=True, exist_ok=True)
     ergebnisse = []
-    AnzahlZüge_pro_Spalte = []
-    AnzahlKonf_pro_Spalte = []
     
     for datei in sorted(ordner_sauber.iterdir(), key=lambda p: p.name):
         #print(f"der datei name ist {datei}")
-        WrongTimeOrder, Deadlock, Position, Bahnhofslänge, AnzahlZüge, AnzahlKonflikte = run(datei, 182000, 1)
+        WrongTimeOrder, Deadlock, Position, Bahnhofslänge, AnzahlZüge= run(datei, Auto=1)
         
         dateiname, Bahnhof = datei.name.split(".csv",1)
         Bahnhof = Bahnhof[1:-4]
 
-        ergebnisse.append([dateiname, Bahnhof, WrongTimeOrder, Deadlock, Position, Bahnhofslänge,])
+        ergebnisse.append([dateiname, Bahnhof, AnzahlZüge, WrongTimeOrder, Deadlock, Position, Bahnhofslänge])
 
-        AnzahlKonf_pro_Spalte.append(AnzahlKonflikte)
-        AnzahlZüge_pro_Spalte.append(AnzahlZüge)
-    
 
-    df_ergebnisse = pd.DataFrame(ergebnisse, columns=["dateiname","Bahnhof","TimeOrder", "Deadlock", "Postion", "Bahnhofslänge"])
-    df_ergebnisse.to_csv(f"Auswertung_{k}.csv", sep=";", index = False, encoding ="utf-8")
-    return AnzahlZüge_pro_Spalte, AnzahlKonf_pro_Spalte
+    df_ergebnisse = pd.DataFrame(ergebnisse, columns=["dateiname","Bahnhof","Anzahl Züge", "TimeOrder", "Deadlock", "Postion", "Bahnhofslänge"])
+    df_ergebnisse.to_csv(rf"Auswertung\Auswertung_{k}.csv", sep=";", index = False, encoding ="utf-8")
+
 
 
 
@@ -75,8 +70,10 @@ def säubern_ganzen_ordner(ordner_original, ordner_sauber):
 def Werte_normieren(data, k):
     dateinamen = np.genfromtxt(data, delimiter =";", skip_header = 1, dtype=str, usecols=0)
     Bahnhofsnahmen = np.genfromtxt(data, delimiter =";", skip_header = 1, dtype=str, usecols=1)
+    Anzahl_Züge = np.genfromtxt(data, delimiter =";", skip_header = 1, dtype=str, usecols=2)
+
     werte = np.genfromtxt(data, delimiter = ";", skip_header = 1, dtype=float)
-    werte = werte[:, 2:]
+    werte = werte[:, 3:]
 
     anzahl_zeilen, anzahl_spalten = werte.shape
     
@@ -106,6 +103,7 @@ def Werte_normieren(data, k):
         zeile = []
         zeile.append(dateinamen[i])
         zeile.append(Bahnhofsnahmen[i])
+        zeile.append(Anzahl_Züge[i])
         for j in range(anzahl_spalten):
             if Varianz_der_Spalten[j] == 0:
                 z = 0.0
@@ -114,24 +112,77 @@ def Werte_normieren(data, k):
             zeile.append(z)
         ergebnisse_ges.append(zeile)
 
-    df_ergebnisse = pd.DataFrame(ergebnisse_ges, columns=["dateiname", "Bahnhof","TimeOrder", "Deadlock", "Postion", "Bahnhofslänge"])
-    df_ergebnisse.to_csv(f"genormte_werte_{k}.csv", sep = ";", index= False, encoding="utf-8")
+    df_ergebnisse = pd.DataFrame(ergebnisse_ges, columns=["dateiname", "Bahnhof", "Anzahl Züge", "TimeOrder", "Deadlock", "Postion", "Bahnhofslänge"])
+    df_ergebnisse.to_csv(rf"genormte_werte\genormte_werte_{k}.csv", sep = ";", index= False, encoding="utf-8")
     return Varianz_der_Spalten, Mittelwert_der_Spalten
+
+def Diagramm_AnzahlZüge_Konflikt(data, WrongTimeOrder = False, Deadlock = False, Positionskonflikt = False, Bahnhofslänge = False):
+    AnzahlZüge = np.genfromtxt(data, delimiter =";", skip_header = 1, dtype=int, usecols=2)
+    WrongTimeOrder_D = np.genfromtxt(data, delimiter =";", skip_header = 1, dtype=int, usecols=3)
+    Deadlock_D = np.genfromtxt(data, delimiter =";", skip_header = 1, dtype=int, usecols=4)
+    Positionskonflikt_D = np.genfromtxt(data, delimiter =";", skip_header = 1, dtype=int, usecols=5)
+    Bahnhofslänge_D = np.genfromtxt(data, delimiter =";", skip_header = 1, dtype=int, usecols=6)
+
+    plt.figure(figsize=(10,10))
+    if WrongTimeOrder == True:
+        unique_points, counts = np.unique(np.column_stack([AnzahlZüge, WrongTimeOrder_D]), axis=0, return_counts=True)
+        plt.scatter(unique_points[:,0], unique_points[:,1], s=counts*1.1, c='blue', label="WrongTimeOrder")
+        
+    if Deadlock == True:
+        unique_points, counts = np.unique(np.column_stack([AnzahlZüge, Deadlock_D]), axis=0, return_counts=True)
+        plt.scatter(unique_points[:,0], unique_points[:,1], s=counts*1.1, c='red', label="Deadlock")
+
+    if Positionskonflikt == True:
+        unique_points, counts = np.unique(np.column_stack([AnzahlZüge, Positionskonflikt_D]), axis=0, return_counts=True)
+        plt.scatter(unique_points[:,0], unique_points[:,1], s=counts*1.1, c='yellow', label="Positionskonflikt")
+
+    if Bahnhofslänge == True:
+        unique_points, counts = np.unique(np.column_stack([AnzahlZüge, Bahnhofslänge_D]), axis=0, return_counts=True)
+        plt.scatter(unique_points[:,0], unique_points[:,1], s=counts*1.1, c='green', label="Bahnhofslänge")
+
+    plt.xlabel("Anzahl Züge")
+    plt.ylabel("Anzahl an Konflikten")
+    plt.legend(markerscale = 0.2)
+    plt.grid(True, alpha=0.3)
+    plt.tight_layout
+    plt.show()
+
+
+
+
+
+
+
+
+
 
 Dateinamen = "track539"
 
-original = Path(rf"C:\Users\dek\Documents\tracks\{Dateinamen}")
-sauber = Path(rf"C:\Users\dek\Documents\tracks\{Dateinamen}_sauber")
+# original = Path(rf"C:\Users\dek\Documents\tracks\{Dateinamen}")
+# sauber = Path(rf"C:\Users\dek\Documents\tracks\{Dateinamen}_sauber")
+
+original = Path(r"C:\Users\devin\OneDrive\Desktop\Projekte\Turtle\tracks539")
+sauber = Path(r"C:\Users\devin\OneDrive\Desktop\Projekte\Turtle\tracks539_sauber")
+
+
 #säubern_ganzen_ordner(original, sauber)
 
+#run_für_ganzen_ordner(sauber, Dateinamen)
 
 
-# AnzahlZüge, AnzahlKonflikte = run_für_ganzen_ordner(sauber, Dateinamen)
+Pfad_Auswertung = Path(rf"C:\Users\devin\OneDrive\Desktop\Projekte\Turtle\Auswertung\Auswertung_{Dateinamen}.csv")
+Pfad_genormt = Path(rf"C:\Users\devin\OneDrive\Desktop\Projekte\Turtle\genormte_werte\genormte_werte_{Dateinamen}.csv")
 
-# Pfad_Auswertung = Path(rf"C:\Users\dek\Documents\Turtle\Auswertung\Auswertung_{Dateinamen}.csv")
-# Pfad_genormt = Path(rf"C:\Users\dek\Documents\Turtle\genormte_werte\genormte_werte_{Dateinamen}.csv")
 
-# Varianzen, Mittelwerte = Werte_normieren(Pfad_Auswertung, Dateinamen)
+# cache_path = Path("cahe_normierung.npz")
+
+# if cache_path.exists():
+#     data = np.load(cache_path)
+#     Varianzen = data["Varianzen"]
+#     Mittelwerte = data["Mittelwerte"]
+# else:
+#     Varianzen, Mittelwerte = Werte_normieren(Pfad_Auswertung, Dateinamen)
+#     np.savez(cache_path, Varianzen=Varianzen, Mittelwerte=Mittelwerte)
 
 
 
@@ -160,17 +211,5 @@ sauber = Path(rf"C:\Users\dek\Documents\tracks\{Dateinamen}_sauber")
 # K_Means.k_means(Pfad_genormt, 4, x_achse=0, y_achse=1, Diagramm=True, sil = True)
 
 
-# #AnzahlZüge gegen Konfliktanzahl
-# punkte = list(zip(AnzahlZüge, AnzahlKonflikte))
-# häufigkeit = Counter(punkte)
-# größen = [häufigkeit[(x,y)] * 5 for x,y in punkte] 
-# fig, ax = plt.subplots(figsize=(8, 6))
-# ax.scatter(AnzahlZüge, AnzahlKonflikte, s = größen)
-# ax.set_xlabel('Anzahl der Züge')
-# ax.set_ylabel('Anzahl Konflikte (gesamt)')
-# ax.set_title('Konflikte vs. Anzahl Züge')
-# ax.grid(True)
-# plt.tight_layout()
-# plt.show()
 
-
+Diagramm_AnzahlZüge_Konflikt(Pfad_Auswertung, WrongTimeOrder=False, Deadlock=True, Positionskonflikt= True, Bahnhofslänge=True)

@@ -17,9 +17,10 @@ def run(csv_Path: Path, Auto,  Tor_length_man = 182000):
         Pfad_String = csv_Path.name
         _, _, Bahnhofsname = Pfad_String.partition(".csv_")
         Bahnhofsname, _, _ = Bahnhofsname.partition(".csv")
-        Tor_length = Bahnhöfe.Bahnhofslänge(Bahnhofsname)
+        Tor_length = Bahnhöfe.Bahnhofslänge(Bahnhofsname, Tor_length_man)
     else:
         Tor_length = Tor_length_man
+
     tor = Model.Tor(1, Tor_length, Turtles)
     sim = Model.Simulation(tor, Turtles)
     Ereignisse = [] #Liste IDs, Zeit, Aktion (0 reinlaufen, 1 rauslaufen)
@@ -115,8 +116,7 @@ def run(csv_Path: Path, Auto,  Tor_length_man = 182000):
                 verbund_turtles.rauslassen(sim)
 
     #sim.Animation(Turtles)
-    Konflikte_Ges = sum(tor.Strafen_Anzahl)-tor.Strafen_Anzahl[0]
-    return(tor.Strafen_Anzahl[0], tor.Strafen_Anzahl[1], tor.Strafen_Anzahl[2], tor.Strafen_Anzahl[3], number_of_trains, Konflikte_Ges)
+    return(tor.Strafen_Anzahl[0], tor.Strafen_Anzahl[1], tor.Strafen_Anzahl[2], tor.Strafen_Anzahl[3], number_of_trains)
 
            
 

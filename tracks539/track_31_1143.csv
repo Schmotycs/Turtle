@@ -1,0 +1,7 @@
+
+Location ABL_Stop_8, trackType NoConstraint, cost 0.000000 / 0.000000
+
+Index; Vehicle Type; Vehicle length; in trip; in position; in time; in gate; out trip; out position; out time; out gate
+0;MFA;59000;-;1;00:10:15;(R);4058;0;00:15:42;(R)
+1;MFA;59000;-;2;00:10:15;(R);4058;1;00:15:42;(R)
+

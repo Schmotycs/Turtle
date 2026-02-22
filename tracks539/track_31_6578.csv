@@ -1,0 +1,9 @@
+
+Location FA_Stop_4, trackType NoConstraint, cost 86.000000 / 86.000000
+
+Index; Vehicle Type; Vehicle length; in trip; in position; in time; in gate; out trip; out position; out time; out gate
+0;MFA;59000;-;0;00:15:08;(L);51;2;00:15:39;(L)
+1;MFA;59000;-;2;00:15:34;(R);951;0;00:15:42;(R)
+2;MFA;59000;-;1;00:15:34;(R);51;0;00:15:39;(L)
+3;MFA;59000;-;0;00:15:34;(R);51;1;00:15:39;(L)
+

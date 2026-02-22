@@ -1,0 +1,7 @@
+
+Location AR_Stop_2, trackType NoConstraint, cost 0.000000 / 0.000000
+
+Index; Vehicle Type; Vehicle length; in trip; in position; in time; in gate; out trip; out position; out time; out gate
+0;MFA;59000;-;1;00:13:10;(L);42;0;00:13:15;(L)
+1;MFA;59000;-;0;00:13:08;(L);42;1;00:13:15;(L)
+

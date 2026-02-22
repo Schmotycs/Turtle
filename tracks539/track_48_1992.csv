@@ -1,0 +1,9 @@
+
+Location CPH_Stop_3, trackType NoConstraint, cost 0.000000 / 0.000000
+
+Index; Vehicle Type; Vehicle length; in trip; in position; in time; in gate; out trip; out position; out time; out gate
+0;ER;76500;-;0;00:08:31;(L);-;0;00:08:31;(R)
+1;ER;76500;-;1;00:08:31;(L);-;0;00:08:31;(R)
+2;MFA;59000;-;2;00:08:31;(L);-;0;00:08:31;(R)
+3;MFA;59000;-;3;00:08:31;(L);-;0;00:08:31;(R)
+
